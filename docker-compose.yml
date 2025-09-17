@@ -1,34 +1,61 @@
+# version: '3.8'
+# Version du format Docker Compose utilisée (ici 3.8).
+# Pour des stacks simples sur Docker Desktop ou WSL, version: '3.8' est parfait.
+# Si tu veux utiliser des fonctionnalités avancées (healthchecks, condition de dépendance, configs secrets Swarm), vérifie la doc officielle pour la version compatible.
 services:
+  # Début de la section des services (conteneurs à lancer).
   # Service pour l'application Node.js
   app:
     build: .
+    # Construit l’image à partir du Dockerfile présent dans le dossier courant (".").
     ports:
       - "7200:7200"
+# Mappe le port 7200 du conteneur vers le port 7200 de la machine hôte.
+# Ainsi, on peut accéder à l’application Node.js via http://localhost:3000.
+
     environment:
       - DB_HOST=${DB_HOST}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
       - PORT=${PORT}
+# Définit les variables d’environnement pour l’application.
+# Les valeurs proviennent du fichier .env ou de l’environnement système.
+# Cela permet à l’application de se connecter à la base de données.  
     depends_on:
       db:
-        condition: service_healthy
-    # Attend que la base de données soit prête avant de démarrer l'application
+# Spécifie que ce service dépend du service `db`.
+# Docker démarrera `db` avant `app` (mais ne garantit pas que la DB soit prête à accepter des connexions).
+#        condition: service_healthy => ne va pas fonctionner avec Docker Desktop (suppose d'utiliser Swarm)
+# Attend que la base de données soit prête avant de démarrer l'application
+# Pour que ton app Node.js attende réellement MySQL :
+# Tu dois gérer l’attente côté application (ex. boucle qui teste la DB avant de se lancer).
+# Ou utiliser un script d’attente (wait-for-it.sh, dockerize, wait-for) dans le conteneur app.
+# Exemple minimal avec wait-for-it.sh :
+# command: ["./wait-for-it.sh", "db:3306", "--", "npm", "start"] Ici, ton conteneur app ne démarre que quand MySQL répond sur le port 3306.
     restart: unless-stopped
 
   # Service pour la base de données MySQL
   db:
     image: mysql:8
     restart: always
+# Redémarre le conteneur automatiquement si jamais il s’arrête (utile en production).
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
+# Définit les variables d’environnement nécessaires à MySQL.
+# - MYSQL_ROOT_PASSWORD : mot de passe du compte root.
+# - MYSQL_DATABASE : crée une base de données par défaut au démarrage.      
     ports:
       - "3306:3306"
     volumes:
-      # Persiste les données de la base de données
+# Monte un volume nommé `db_data` dans le dossier interne de MySQL.
+# Cela permet de conserver les données même si le conteneur est supprimé/recréé.
       - db_data:/var/lib/mysql
     healthcheck:
+# Sans healthcheck : Docker considère qu’un conteneur est "en vie" dès qu’il tourne, même si le service n’est pas prêt (ex : MySQL a besoin de quelques secondes pour initialiser la base).
+# Avec un healthcheck : Docker teste régulièrement si le service est vraiment prêt et opérationnel
+# Avec docker ps, tu verras une colonne STATUS avec healthy ou unhealthy.
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
