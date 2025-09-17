@@ -4,6 +4,58 @@
 // listForGc filtre aussi les périodes de Gc selon l’année (debut et fin).
 // Toutes les réponses sont renvoyées en JSON pour le frontend ou les API.
 
+/* Voici un schéma simplifié des relations entre les modèles BddGestion, Bdd et Gc de ton application, avec explications :
++--------------+        +---------------+        +-------+
+|   Bdd        |<-------|  BddGestion   |        |  Gc   |
+|--------------|        |---------------|        |-------|
+| id (PK)      |<------ | bdd_id (FK)   |------> | id    |
+| bdd          |        | etat          |        | debut |
+| pole_gestion |        | annee         |        | fin   |
+| perimetre    |        | montant_ttc   |        | montant_ttc |
+| soutien_oa   |        | ...           |        | ...   |
++---------+              +---------------+       +-------+
+
+Explications :
+
+Bdd
+
+Table principale des budgets.
+
+Contient des informations générales comme bdd, pole_gestion, perimetre et soutien_oa.
+
+id est la clé primaire.
+
+BddGestion
+
+Contient les informations de gestion pour un budget précis et pour une année (annee).
+
+bdd_id fait référence à Bdd.id.
+
+etat, montant_ttc, reliquat, etc., stockent l’état et les montants du budget.
+
+Gc
+
+Table des périodes de gestion GC, avec debut, fin et montant_ttc.
+
+Liée à Bdd via Bdd.Gcs pour récupérer les périodes correspondant à une année spécifique.
+
+Relations principales :
+
+BddGestion → Bdd : plusieurs gestionnaires peuvent être liés à un budget (bdd_id).
+
+Bdd → Gc : un budget peut avoir plusieurs périodes GC (Gcs).
+
+Les fonctions listForGestion et listForGc utilisent ces relations pour joindre Bdd et Gc et renvoyer des objets enrichis au frontend.
+
+Résumé fonctionnel :
+
+listForGestion : récupère BddGestion avec les informations générales du budget (pole, perimetre…).
+
+listForGc : récupère BddGestion avec les périodes GC correspondantes à l’année du BddGestion, pour le dashboard.
+
+*/
+  
+
 // On importe le modèle "BddGestion" depuis "../models"
 // Ce modèle contient les informations de gestion de budgets (montants, état, année, etc.)
 const BddGestion = require("../models").BddGestion; 
