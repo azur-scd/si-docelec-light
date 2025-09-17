@@ -112,3 +112,61 @@ Certaines pages proposent des liens d’installation, de documentation, ou des e
 ## En résumé :
 
 L’application azur-scd/si-scd-prod est une plateforme web Node.js Express structurée en MVC, avec une API REST (Sequelize), une authentification sécurisée (Passport), des vues dynamiques (EJS), et de nombreuses fonctionnalités métier autour de la gestion documentaire et des statistiques.
+
+# Analyse des dépendances (par copilot)
+
+## Framework, serveur et moteur de template
+
+* __express__ : Framework web principal, structure les routes et la logique serveur.
+* __ejs__ : Moteur de templates pour générer les pages HTML dynamiques.
+* __express-session__ : Gestion des sessions utilisateurs côté serveur.
+
+## Sécurité, authentification et gestion des droits
+
+* __passport__ : Middleware pour l’authentification utilisateur.
+* __passport-cas__ : Authentification via le protocole CAS (Central Authentication Service).
+* __passport-local__ : Authentification locale (login/mot de passe).
+* __bcryptjs__ : Hashage des mots de passe pour sécuriser les données utilisateurs.
+* __accesscontrol__ : Gestion fine des permissions et rôles.
+
+## Base de données et ORM
+
+* __sequelize__ : ORM pour manipuler la base MySQL en objets JavaScript.
+* __mysql2__ : Connecteur rapide pour MySQL.
+
+## Utilitaires et middlewares
+
+* __connect-busboy__ : Gestion de l’upload de fichiers (stream).
+* __cookie-parser__ : Parse et gère les cookies HTTP.
+* __cors__ : Autorise les requêtes cross-origin (CORS).
+
+## Outils de développement
+* __nodemon__ : Redémarrage automatique du serveur lors des modifications.
+* __node-gyp__ & __node-pre-gyp__ : Compilation et gestion des modules natifs Node.js.
+
+## Visualisation des liens et dépendances
+
+```
+[Express] <--- [express-session] <--- [passport] <--- [passport-cas / passport-local]
+     |                    |
+     |                    +--- [accesscontrol] (permissions)
+     |                    +--- [cookie-parser], [bcryptjs]
+     |
+     +--- [ejs] (templates)
+     |
+     +--- [sequelize] <--- [mysql2] (base de données)
+     |
+     +--- [connect-busboy] (upload fichiers)
+     +--- [cors] (CORS)
+```
+
+## Points d’attention
+
+* __Sécurité__ : L’application combine authentification locale et CAS, avec hashage des mots de passe et gestion des droits.
+* __Scalabilité__ : Utilisation d’un ORM (Sequelize), facilitant la gestion évolutive de la base de données.
+* __Interopérabilité__ : CORS et gestion des sessions permettent une ouverture vers des clients variés (fronts externes, API).
+* __Déploiement__ : Outils comme nodemon et node-gyp facilitent le développement et le packaging sur différentes plateformes.
+
+connect-busboy : c’est le point faible. Il est obsolète, peu maintenu, et peut poser souci avec les versions récentes d’Express.
+
+passport-cas : peu de mises à jour, donc surveille bien les failles potentielles.
