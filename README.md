@@ -131,6 +131,8 @@ Code à ajouter dans package.json :
 }
 ```
 
+Si on utilise Docker cette ligne dans package.json garantit que la bonne version de Node sera utilisée. Pour l'intégration continue (GitHub Actions, GitLab CI…), spécifieil faudrait également node-version: 20.x.
+
 ## Framework, serveur et moteur de template
 
 * __express__ : Framework web principal, structure les routes et la logique serveur.
