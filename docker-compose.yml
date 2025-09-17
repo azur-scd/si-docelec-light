@@ -23,7 +23,7 @@ services:
 # Les valeurs proviennent du fichier .env ou de l’environnement système.
 # Cela permet à l’application de se connecter à la base de données.  
     depends_on:
-      db:
+      - db
 # Spécifie que ce service dépend du service `db`.
 # Docker démarrera `db` avant `app` (mais ne garantit pas que la DB soit prête à accepter des connexions).
 #        condition: service_healthy => ne va pas fonctionner avec Docker Desktop (suppose d'utiliser Swarm)
