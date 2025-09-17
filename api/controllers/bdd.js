@@ -1,4 +1,10 @@
-// On importe le modèle "Bdd" depuis le dossier "../models". 
+// req.query : permet de filtrer les enregistrements depuis l’URL.
+// req.params.bddId : permet de récupérer un paramètre dynamique de l’URL (ex: /bdd/5).
+// req.body : contient les données envoyées par le client (POST ou PUT).
+// Sequelize renvoie toujours des Promises, d’où l’utilisation de .then(...).
+// BddSignalement est importé mais jamais utilisé dans ce code.
+  
+  // On importe le modèle "Bdd" depuis le dossier "../models". 
 // Ce modèle correspond à une table dans la base de données.
 const Bdd = require("../models").Bdd;
 
