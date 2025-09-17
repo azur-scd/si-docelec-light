@@ -1,23 +1,23 @@
 {
   "development": {
-    "username": "",
-    "password": "",
-    "database": "",
-    "host": "localhost",
+    "username": "root",
+    "password": "example",
+    "database": "si_scd_prod",
+    "host": "db",
     "dialect": "mysql"
   },
   "test": {
-    "username": "",
-    "password": "",
-    "database": "",
-    "host": "localhost",
+    "username": "root",
+    "password": "example",
+    "database": "si_scd_prod",
+    "host": "db",
     "dialect": "mysql"
   },
   "production": {
-    "username": "",
-    "password": "",
-    "database": "",
-    "host": "localhost",
+    "username": "root",
+    "password": "example",
+    "database": "si_scd_prod",
+    "host": "db",
     "dialect": "mysql"
   }
 }

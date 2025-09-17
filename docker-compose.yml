@@ -14,7 +14,7 @@ services:
 # Ainsi, on peut accéder à l’application Node.js via http://localhost:3000.
 
     environment:
-      - DB_HOST=${DB_HOST}
+      - DB_HOST=db
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_NAME=${DB_NAME}
@@ -33,6 +33,8 @@ services:
 # Ou utiliser un script d’attente (wait-for-it.sh, dockerize, wait-for) dans le conteneur app.
 # Exemple minimal avec wait-for-it.sh :
 # command: ["./wait-for-it.sh", "db:3306", "--", "npm", "start"] Ici, ton conteneur app ne démarre que quand MySQL répond sur le port 3306.
+# Attente que MySQL soit prêt avant de lancer npm start
+    command: ["/usr/bin/wait-for-it.sh", "db:3306", "--", "npm", "start"]
     restart: unless-stopped
 
   # Service pour la base de données MySQL

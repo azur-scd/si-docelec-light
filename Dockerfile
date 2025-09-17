@@ -18,3 +18,6 @@ EXPOSE 7200
 
 # Définit la commande à exécuter pour démarrer l'application
 CMD ["node", "server.js"]
+
+COPY wait-for-it.sh /usr/bin/wait-for-it.sh
+RUN chmod +x /usr/bin/wait-for-it.sh
