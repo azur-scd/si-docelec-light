@@ -121,11 +121,13 @@ Le fichier package.json actuel ne précise pas la version de Node.js utilisée (
 
 Pour garantir la compatibilité et faciliter le déploiement, il est conseillé d’ajouter une section "engines" dans le package.json.
 
-Exemple pour Node.js :
+Copilot estime que toutes tes dépendances (Express, Sequelize, Passport, etc.) sont parfaitement compatibles avec Node.js 18.x et 20.x (LTS) et recommande d’utiliser la version LTS la plus récente, c’est-à-dire Node.js 20.x.
+
+Code à ajouter dans package.json :
 
 ```JSON
 "engines": {
-  "node": ">=18.0.0"
+  "node": ">=20.0.0"
 }
 ```
 
