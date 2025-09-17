@@ -115,6 +115,20 @@ L’application azur-scd/si-scd-prod est une plateforme web Node.js Express stru
 
 # Analyse des dépendances (par copilot)
 
+## Version de node.js
+
+Le fichier package.json actuel ne précise pas la version de Node.js utilisée (aucune section "engines" ou version explicitement définie). La version de Node utilisée dépend donc de celle installée sur le serveur ou la machine où tourne l’application.
+
+Pour garantir la compatibilité et faciliter le déploiement, il est conseillé d’ajouter une section "engines" dans le package.json.
+
+Exemple pour Node.js :
+
+```JSON
+"engines": {
+  "node": ">=18.0.0"
+}
+```
+
 ## Framework, serveur et moteur de template
 
 * __express__ : Framework web principal, structure les routes et la logique serveur.
