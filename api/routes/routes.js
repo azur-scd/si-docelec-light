@@ -9,7 +9,7 @@
 // ...
 // }
 // La fonction exportée reçoit app (instance Express).
-/ app.route('/chemin') définit la route pour une URL donnée.
+// app.route('/chemin') définit la route pour une URL donnée.
 // .get(), .post(), .put(), .delete() associent la route à une méthode HTTP et à la fonction du contrôleur.
 // Exemple : BUS
 // app.route('/api/bus').get(buController.list); 
