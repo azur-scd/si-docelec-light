@@ -2,6 +2,86 @@
 
 Version du SI-SCD basée sur Node.js, Express, Sequelize et ejs pour le moteur de rendu
 
+## Installation et lancement avec Docker
+
+Cette application peut être facilement lancée avec Docker et docker-compose.
+
+### Prérequis
+
+- Docker
+- Docker Compose
+
+### Lancement de l'application
+
+1. **Cloner le projet** (si ce n'est pas déjà fait)
+   ```bash
+   git clone <url-du-repo>
+   cd si-scd-prod
+   ```
+
+2. **Configuration des variables d'environnement**
+   
+   Le fichier `.env` à la racine du projet contient toutes les variables d'environnement nécessaires :
+   - Configuration MySQL (mot de passe root, nom de base de données)
+   - Configuration de connexion de l'application à la base de données
+   - Port d'écoute de l'application
+
+   Vous pouvez modifier ces valeurs selon vos besoins en éditant le fichier `.env`.
+
+3. **Lancer l'application avec docker compose**
+   ```bash
+   docker compose up -d
+   ```
+
+4. **Accéder à l'application**
+   
+   L'application sera accessible sur : http://localhost:7200
+
+### Commandes utiles
+
+- **Voir les logs de l'application** :
+  ```bash
+  docker compose logs app
+  ```
+
+- **Voir les logs de la base de données** :
+  ```bash
+  docker compose logs db
+  ```
+
+- **Suivre les logs en temps réel** :
+  ```bash
+  docker compose logs -f app
+  ```
+
+- **Arrêter l'application** :
+  ```bash
+  docker compose down
+  ```
+
+- **Arrêter et supprimer les volumes (⚠️ supprime les données)** :
+  ```bash
+  docker compose down -v
+  ```
+
+- **Reconstruire l'image en cas de modification du code** :
+  ```bash
+  docker compose up --build
+  ```
+
+### Résolution de problèmes
+
+- **L'application se redémarre en boucle** : Vérifiez les logs avec `docker compose logs app`. Cela peut être dû à des problèmes de compatibilité entre les versions des dépendances.
+
+- **Problème de connexion à la base de données** : Assurez-vous que la base MySQL est complètement initialisée avant que l'application ne démarre. Le healthcheck configuré dans docker-compose.yml aide à gérer cela automatiquement.
+
+### Structure des fichiers Docker
+
+- `Dockerfile` : Construction de l'image Node.js de l'application
+- `docker-compose.yml` : Orchestration des services (app Node.js + base MySQL)
+- `.dockerignore` : Fichiers à exclure lors de la construction de l'image
+- `.env` : Variables d'environnement pour la configuration
+
 # Architecture (par copilot)
 
 ## 1. Structure générale
