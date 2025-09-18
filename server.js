@@ -67,19 +67,16 @@ require("./api/config/passport.js")
 // Vue et moteur de template
 // view engine : utilise EJS pour rendre des templates HTML côté serveur.
 // views : chemin vers le dossier contenant les templates.
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-// Lancement du serveur
+// Lancement du serveur HTTP avec un timeout augmenté
 const server = http.createServer(app);
-// timeout de 30 minutes
 server.requestTimeout = 30 * 60 * 1000; // 30 minutes
 server.listen(port, () => {
   console.log('We are live on ' + port);
 });
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'ejs');
 
 // Assets statiques
 // Permet de servir des fichiers statiques (CSS, JS, images) depuis le dossier public.
