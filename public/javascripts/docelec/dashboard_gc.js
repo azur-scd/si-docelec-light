@@ -1,4 +1,5 @@
 import { binaryState, poleState, marcheState, achatperenneState, typeAchatState, typeBddState, typeBase, typeOA, typePerimetre, accessState, typeSignalement , modeSignalement, getStatState, disciplines, deviseState, etatState, etatStatSaisie, years, steps,  metrics,  months,  sushiReportUrlSegment, esgbuDisplayReport, userGroups,  statsCounter } from '../lookupArrays.js';
+import {urlBdd, urlGestion, urlGestionCustom, urlGestionGc, urlSignalement, urlSignalementCustom, urlSignalementPrimo, urlGC, urlStatsReports, urlFormStats, urlStats, urlStatsSuivi, urlStatsIndicators, urlStatsEsgbu, urlBddUniqueStatsReports, urlProxySushiTest, urlProxySushi, urlUser, urlBU, urlDisc, urlBdd2Disc, getApiUrl} from '../apiUrls.js';
 import {formattingDate, copyObjectProps, object2array, getGroupSum, getGroupCount, groupBy, budgetSuiviSumAndCount} from '../commonFunctions.js';
 import {handleResponse, handleError, getItems, updateItems, createItems, deleteItems, getDataEncoded} from '../crud.js';
 
