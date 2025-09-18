@@ -1,3 +1,20 @@
+// TODO//
+// Tu sérialises certains objets lors de l’enregistrement (gestion, stats_collecte, calcul_esgbu) avec la logique suivante :
+// for (x in e.newData) {
+//  if(e.newData[x] !== undefined && e.newData[x] !== null && e.newData[x].constructor == Object) {
+//    e.newData[x] = JSON.stringify(e.newData[x])
+//  }
+// }
+// Cette logique peut écraser de façon non souhaitée des valeurs préexistantes, et risque d’avoir des effets de bord si la structure change.
+// À faire :
+// Vérifie que tu veux bien sérialiser ces champs. Sinon, adapte la logique pour ne traiter que les objets attendus.
+
+// Déclaration des URLs API (à adapter selon votre backend)
+const urlGC = "/api/gc";
+const urlBdd = "/api/bdd";
+const urlBdd2Disc = "/api/bdd2disc";
+const urlDisc = "/api/disc";
+
 $(function(){
 	
 	// Détermine le mode édition selon le groupe utilisateur
