@@ -156,7 +156,7 @@ $(function () {
     function getAvalaibleReports(bdd){
         $("#avalaibleReports").empty()
         return getItems(urlBddUniqueStatsReports + "/bddid/" + bdd)
-        .done(function (result) {
+        .then(function (result) {
             console.log("[getAvalaibleReports] Rapports disponibles :", result)
             $("#avalaibleReports").append("Statistiques disponibles (déjà collectées) pour cette ressource : ")
             result.map(function(d){
@@ -170,7 +170,7 @@ $(function () {
         $("#form").empty()
         displayForm();
         return getItems(urlFormStats + "/?bddId=" + bdd + "&reportId=" + report + "&year=" + year)
-            .done(function (data) {
+            .then(function (data) {
                 console.log("[getFormData] Données reçues :", data)
                 if (typeof year !== "undefined" && typeof bdd !== "undefined" && typeof report !== "undefined" && data.length != 0) {
                     $("#alertData").hide()
@@ -215,7 +215,7 @@ $(function () {
     // Récupère et affiche les paramètres Sushi pour la BDD
     function getSushiParam(id) {
         return getItems(urlBdd + "/" + id)
-            .done(function (result) {
+            .then(function (result) {
                 // On remet ici les valeurs de l'array sushiReportUrlSegment car blocage dans l'UI sinon ?
                 var sushiReportUrlSegment = [
                     { "cle": "0-tr_j1", "metric":"Total_Item_Requests","valeur": "Revues - Téléchargements (tr_j1) - Total Item Requests", "mapReportId": 1 },
