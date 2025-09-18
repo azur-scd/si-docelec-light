@@ -30,6 +30,10 @@ const app            = express();
 const port = process.env.PORT || 7200;
 
 // Middleware pour parser les requêtes
+// app.use sert à installer un ou plusieurs « middleware » qui vont intervenir à chaque requête HTTP reçue par ton serveur Express, pour effectuer un traitement particulier (authentification, parsing, upload, etc.).
+// Un middleware est une fonction qui reçoit la requête (req), la réponse (res) et une fonction next. Il permet de traiter/modifier la requête ou la réponse, vérifier l’authentification, gérer les fichiers uploadés, parser le corps des requêtes, gérer les erreurs...
+// Si tu veux que le middleware ne s’applique qu’à une route : app.use('/api', myMiddleware); → Le middleware ne s’appliquera que pour les routes qui commencent par /api.
+  
 // express.urlencoded / express.json : pour récupérer les données POST (formulaires ou JSON).
 // busboy : pour gérer les fichiers uploadés via multipart/form-data.
 // cors : permet aux clients front-end d’accéder à l’API depuis d’autres domaines.
