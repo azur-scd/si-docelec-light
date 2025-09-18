@@ -37,8 +37,8 @@ function getApiUrl(urlName, urlValue) {
   return urlValue;
 }
 
-// Exemple d'usage : getApiUrl('urlBdd', urlBdd)
-// Idéalement à utiliser partout où on accède à une URL d'API, ex : fetch(getApiUrl('urlStats', urlStats))
+// Exemple d'usage: getApiUrl('urlBdd', urlBdd)
+// Idéalement à utiliser partout où on accède à une URL d'API, ex: fetch(getApiUrl('urlStats', urlStats))
 
 // Export des URLs et du helper
 export {
@@ -65,3 +65,4 @@ export {
   urlBdd2Disc,
   getApiUrl
 };
+

@@ -1,6 +1,9 @@
 import { binaryState, poleState, marcheState, achatperenneState, typeAchatState, typeBddState, typeBase, typeOA, typePerimetre, accessState, typeSignalement , modeSignalement, getStatState, disciplines, deviseState, etatState, etatStatSaisie, years, steps,  metrics,  months,  sushiReportUrlSegment, esgbuDisplayReport, userGroups,  statsCounter } from '../lookupArrays.js';
-$(function () {
+import {getDataEncoded, formattingDate, copyObjectProps, object2array, getGroupSum, getGroupCount, groupBy, budgetSuiviSumAndCount} from '../commonFunctions.js';
+import {handleResponse, handleError, getItems, updateItems, createItems, deleteItems, getDataEncoded} from '../crud.js';
 
+
+$(function () {
   $("#selected_year").val(years[9].cle)
     $("#selected_report").val(esgbuDisplayReport[0].cle)
     annualTotalBar($("#selected_year").val(),$("#selected_report").val())

@@ -3,7 +3,7 @@
  * @param {Object} jsonData
  * @returns {string}
  */
-const getDataEncoded = jsonData => {
+export const getDataEncoded = jsonData => {
   console.log('[getDataEncoded] Entrée:', jsonData);
   const result = Object.entries(jsonData)
     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
@@ -17,7 +17,7 @@ const getDataEncoded = jsonData => {
  * @param {Date|string|number} date
  * @returns {string}
  */
-const formattingDate = date => {
+export const formattingDate = date => {
   console.log('[formattingDate] Entrée:', date);
   const d = new Date(date);
   const year = d.getFullYear();
@@ -34,7 +34,7 @@ const formattingDate = date => {
  * @param {Array<string>} keys
  * @returns {Object}
  */
-const copyObjectProps = (source, keys) => {
+export const copyObjectProps = (source, keys) => {
   console.log('[copyObjectProps] Source:', source, 'Clés:', keys);
   const result = keys.reduce((obj, key) => {
     if (source[key] != null) obj[key] = source[key];
@@ -49,7 +49,7 @@ const copyObjectProps = (source, keys) => {
  * @param {Object} obj
  * @returns {Array<{key: string, value: any}>}
  */
-const object2array = obj => {
+export const object2array = obj => {
   console.log('[object2array] Entrée:', obj);
   const result = Object.entries(obj).map(([key, value]) => ({ key, value }));
   console.log('[object2array] Résultat:', result);
@@ -63,7 +63,7 @@ const object2array = obj => {
  * @param {string} aggField
  * @returns {Array<{key: string, value: number}>}
  */
-const getGroupSum = (data, labelField, aggField) => {
+export const getGroupSum = (data, labelField, aggField) => {
   console.log('[getGroupSum] Entrée:', { data, labelField, aggField });
   const agg = data
     .filter(Boolean)
@@ -83,7 +83,7 @@ const getGroupSum = (data, labelField, aggField) => {
  * @param {string} aggField
  * @returns {Array<{key: string, value: number}>}
  */
-const getGroupCount = (data, aggField) => {
+export const getGroupCount = (data, aggField) => {
   console.log('[getGroupCount] Entrée:', { data, aggField });
   const result = object2array(_.countBy(data, aggField));
   console.log('[getGroupCount] Résultat:', result);
@@ -97,7 +97,7 @@ const getGroupCount = (data, aggField) => {
  * @param {string} metric
  * @returns {Array<Object>}
  */
-const groupBy = (data, groupKey, metric) => {
+export const groupBy = (data, groupKey, metric) => {
   console.log('[groupBy] Entrée:', { data, groupKey, metric });
   const agg = _.groupBy(data, groupKey);
   const result = Object.entries(agg).map(([key, items]) =>
@@ -124,7 +124,7 @@ const groupBy = (data, groupKey, metric) => {
  * @param {Array<Object>} data
  * @returns {Object}
  */
-const budgetSuiviSumAndCount = data => {
+export const budgetSuiviSumAndCount = data => {
   console.log('[budgetSuiviSumAndCount] Entrée:', data);
   const sum = (arr, field) =>
     arr.reduce((acc, v) => acc + (v[field] || 0), 0);

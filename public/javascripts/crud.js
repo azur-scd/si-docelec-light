@@ -6,7 +6,7 @@
  * @param {String} operation - Le type d'opération CRUD effectuée
  * @returns {Object|null} - Les données utiles ou la réponse brute
  */
-function handleResponse(response, operation = "Opération") {
+export function handleResponse(response, operation = "Opération") {
     if (!response) {
         // Cas où la réponse est nulle ou indéfinie
         console.warn(`[${operation}] Réponse nulle ou indéfinie`);
@@ -29,7 +29,7 @@ function handleResponse(response, operation = "Opération") {
  * @param {String} textStatus - Le statut de l'erreur
  * @param {String} errorThrown - L'erreur jetée
  */
-function handleError(jqXHR, textStatus, errorThrown) {
+export function handleError(jqXHR, textStatus, errorThrown) {
     console.error("Erreur AJAX:", textStatus, errorThrown);
     if (jqXHR && jqXHR.responseText) {
         try {
@@ -48,7 +48,7 @@ function handleError(jqXHR, textStatus, errorThrown) {
  * @param {String} url - L'URL de l'API à interroger
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
-function getItems(url){
+export function getItems(url){
     return $.ajax({
         method: 'GET',
         url: url
@@ -66,7 +66,7 @@ function getItems(url){
  * @param {Object} values - Les valeurs à mettre à jour
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
-function updateItems(url, key, values){
+export function updateItems(url, key, values){
     return $.ajax({
         method: 'PUT',
         url: `${url}/${key}/update`,
@@ -83,7 +83,7 @@ function updateItems(url, key, values){
  * @param {Object} values - Les valeurs du nouvel item
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
-function createItems(url, values){
+export function createItems(url, values){
     return $.ajax({
         method: 'POST',
         url: `${url}/create`,
@@ -100,7 +100,7 @@ function createItems(url, values){
  * @param {String} key - L'identifiant de l'item à supprimer
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
-function deleteItems(url, key){
+export function deleteItems(url, key){
     return $.ajax({
         method: 'DELETE',
         url: `${url}/${key}/delete`
@@ -114,7 +114,7 @@ function deleteItems(url, key){
  * @param {Object} jsonData - Les données à encoder
  * @returns {String} - Les données encodées au format formulaire
  */
-function getDataEncoded(jsonData){
+export function getDataEncoded(jsonData){
     const formBody = [];
     for (const property in jsonData) {
         const encodedKey = encodeURIComponent(property);

@@ -10,12 +10,10 @@
 // Vérifie que tu veux bien sérialiser ces champs. Sinon, adapte la logique pour ne traiter que les objets attendus.
 
 // Déclaration des URLs API (à adapter selon votre backend)
-const urlGC = "/api/gc";
-const urlBdd = "/api/bdd";
-const urlBdd2Disc = "/api/bdd2disc";
-const urlDisc = "/api/disc";
+import {urlBdd, urlGestion, urlGestionCustom, urlGestionGc, urlSignalement, urlSignalementCustom, urlSignalementPrimo, urlGC, urlStatsReports, urlFormStats, urlStats, urlStatsSuivi, urlStatsIndicators, urlStatsEsgbu, urlBddUniqueStatsReports, urlProxySushiTest, urlProxySushi, urlUser, urlBU, urlDisc, urlBdd2Disc, getApiUrl} from '../apiUrls.js';
 import { binaryState, poleState, marcheState, achatperenneState, typeAchatState, typeBddState, typeBase, typeOA, typePerimetre, accessState, typeSignalement , modeSignalement, getStatState, disciplines, deviseState, etatState, etatStatSaisie, years, steps,  metrics,  months,  sushiReportUrlSegment, esgbuDisplayReport, userGroups,  statsCounter } from '../lookupArrays.js';
-
+import {getDataEncoded, formattingDate, copyObjectProps, object2array, getGroupSum, getGroupCount, groupBy, budgetSuiviSumAndCount} from '../commonFunctions.js';
+import {handleResponse, handleError, getItems, updateItems, createItems, deleteItems, getDataEncoded} from '../crud.js';
 
 $(function(){
 	
