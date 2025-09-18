@@ -1,18 +1,4 @@
 /**
- * Encode un objet JSON en string pour le body d'un formulaire (application/x-www-form-urlencoded)
- * @param {Object} jsonData
- * @returns {string}
- */
-export const getDataEncoded = jsonData => {
-  console.log('[getDataEncoded] Entrée:', jsonData);
-  const result = Object.entries(jsonData)
-    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-    .join('&');
-  console.log('[getDataEncoded] Résultat:', result);
-  return result;
-};
-
-/**
  * Formate une date en 'YYYY-MM-DD'
  * @param {Date|string|number} date
  * @returns {string}

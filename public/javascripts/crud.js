@@ -110,16 +110,20 @@ export function deleteItems(url, key){
 }
 
 /**
- * Encode un objet JSON en chaîne pour POST/PUT (application/x-www-form-urlencoded).
- * @param {Object} jsonData - Les données à encoder
- * @returns {String} - Les données encodées au format formulaire
+ * Encode un objet JSON en string pour le body d'un formulaire (application/x-www-form-urlencoded)
+ * Gère aussi les valeurs null, undefined et les tableaux.
+ * @param {Object} data
+ * @returns {string}
  */
-export function getDataEncoded(jsonData){
-    const formBody = [];
-    for (const property in jsonData) {
-        const encodedKey = encodeURIComponent(property);
-        const encodedValue = encodeURIComponent(jsonData[property]);
-        formBody.push(encodedKey + "=" + encodedValue);
-    }
-    return formBody.join("&");
-}
+export const getDataEncoded = (data) => {
+  return Object.entries(data)
+    .flatMap(([key, value]) => {
+      if (value === null || value === undefined) return []; // ignore null/undefined
+      if (Array.isArray(value)) {
+        // encode chaque élément du tableau comme key[]=valeur
+        return value.map(v => `${encodeURIComponent(key)}[]=${encodeURIComponent(v)}`);
+      }
+      return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+    })
+    .join('&');
+};
