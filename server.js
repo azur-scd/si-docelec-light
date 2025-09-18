@@ -20,6 +20,9 @@ const busboy = require('connect-busboy');
 const cors = require('cors');
 // path : module Node.js pour gérer les chemins de fichiers.
 const path = require('path');
+// http
+const http = require('http');
+
 
 // Création de l’instance Express.
 const app            = express();
@@ -63,9 +66,12 @@ require("./api/config/passport.js")
 app.set('view engine', 'ejs');
 
 // Lancement du serveur
-app.listen(port, () => {
-    console.log('We are live on ' + port);
-  });
+const server = http.createServer(app);
+// timeout de 30 minutes
+server.requestTimeout = 30 * 60 * 1000; // 30 minutes
+server.listen(port, () => {
+  console.log('We are live on ' + port);
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
