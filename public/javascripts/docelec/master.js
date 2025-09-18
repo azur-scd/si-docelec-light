@@ -14,6 +14,11 @@ const urlGC = "/api/gc";
 const urlBdd = "/api/bdd";
 const urlBdd2Disc = "/api/bdd2disc";
 const urlDisc = "/api/disc";
+// Définition de binaryState pour un état binaire typique (oui/non, vrai/faux, etc.)
+const binaryState = [
+  { cle: 1, valeur: "Oui" },
+  { cle: 0, valeur: "Non" }
+];
 
 $(function(){
 	
