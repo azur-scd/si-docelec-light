@@ -41,6 +41,8 @@ export function handleError(jqXHR, textStatus, errorThrown) {
             console.error("Réponse d'erreur brute:", jqXHR.responseText);
         }
     }
+    // Pour rejeter la promesse avec une erreur exploitable
+    return {error: textStatus, details: errorThrown, jqXHR};
 }
 
 /**
@@ -67,14 +69,16 @@ export function getItems(url) {
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
 export function updateItems(url, key, values){
-    return $.ajax({
-        method: 'PUT',
-        url: `${url}/${key}/update`,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        data: getDataEncoded(values)
-    })
-    .then(response => handleResponse(response, "UPDATE"))
-    .catch(handleError);
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            method: 'PUT',
+            url: `${url}/${key}/update`,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            data: getDataEncoded(values),
+            success: (response) => resolve(handleResponse(response, "UPDATE")),
+            error: (jqXHR, textStatus, errorThrown) => reject(handleError(jqXHR, textStatus, errorThrown))
+        });
+    });
 }
 
 /**
@@ -84,14 +88,16 @@ export function updateItems(url, key, values){
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
 export function createItems(url, values){
-    return $.ajax({
-        method: 'POST',
-        url: `${url}/create`,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        data: getDataEncoded(values)
-    })
-    .then(response => handleResponse(response, "CREATE"))
-    .catch(handleError);
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            method: 'POST',
+            url: `${url}/create`,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            data: getDataEncoded(values),
+            success: (response) => resolve(handleResponse(response, "CREATE")),
+            error: (jqXHR, textStatus, errorThrown) => reject(handleError(jqXHR, textStatus, errorThrown))
+        });
+    });
 }
 
 /**
@@ -101,12 +107,14 @@ export function createItems(url, values){
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
 export function deleteItems(url, key){
-    return $.ajax({
-        method: 'DELETE',
-        url: `${url}/${key}/delete`
-    })
-    .then(response => handleResponse(response, "DELETE"))
-    .catch(handleError);
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            method: 'DELETE',
+            url: `${url}/${key}/delete`,
+            success: (response) => resolve(handleResponse(response, "DELETE")),
+            error: (jqXHR, textStatus, errorThrown) => reject(handleError(jqXHR, textStatus, errorThrown))
+        });
+    });
 }
 
 /**
