@@ -553,12 +553,12 @@ $(function(){
         },
         onRowUpdating: function(e) {
             // Sérialisation des objets pour l'enregistrement
-            for (x in e.newData) {
+            for (let x in e.newData) {
                 if(e.newData[x] !== undefined && e.newData[x] !== null && e.newData[x].constructor == Object) {
                     e.newData[x] = JSON.stringify(e.newData[x])
                 }
             }
-            for (x in e.oldData) {
+            for (let x in e.oldData) {
                 if(e.oldData[x] !== undefined && e.oldData[x] !== null && e.oldData[x].constructor == Object) {
                     e.newData[x] = JSON.stringify(e.oldData[x])
                 }
@@ -571,7 +571,7 @@ $(function(){
             e.data.calcul_esgbu =  {"2019":true,"2020":false,"2021":false,"2022":false,"2023":false,"2024":false,"2025":false,"2026":false,"2027":false,"2028":false}
         },
         onRowInserting: function(e) {
-            for (x in e.data) {
+            for (let x in e.data) {
                 if(e.data[x] !== undefined && e.data[x] !== null && e.data[x].constructor == Object) {
                     e.data[x] = JSON.stringify(e.data[x])
                 }
