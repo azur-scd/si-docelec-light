@@ -1,6 +1,7 @@
-# SI-SCD
+# SI-Docelec light
+En développement
 
-Version du SI-SCD basée sur Node.js, Express, Sequelize et ejs pour le moteur de rendu
+Version du SI-Docelec basée sur Node.js, Express, Sequelize et ejs pour le moteur de rendu
 
 ## Installation et lancement avec Docker
 
