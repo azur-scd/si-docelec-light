@@ -183,6 +183,8 @@ $(function () {
         $("#total").val(sum);
     }
 
+
+
     function getSushiParam(id) {
         return getItems(urlBdd + "/" + id)
             .done(function (result) {
@@ -301,33 +303,43 @@ $(function () {
         })
     })
 
-    $("#getSushi").click(function () {
-        var completeUrl = $("#completeSushiUrl").val()
-        console.log(completeUrl)
-        var reportId = sushiReportUrlSegment.filter(function (d) { return d.cle = $("#selected_sushi_report").val() }).map(function (d) { return d.mapReportId })
-        return $.ajax({
-            method: 'POST',
-            url: urlProxySushi + $("#selected_sushi_report").val(),
-			headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            data: { "url": completeUrl, "metric" : $("#selected_metric").val() },
-            beforeSend: function() {
-                $("#loaderDiv").show();
-            },
-            success: function (response) {
-                //console.log(response)
-                $("#loaderDiv").hide();
-                months.map(function (m) {
-                    var filterDataByMonth = response.filter(function (i) { return i.dimension === m.code });
-                    console.log(filterDataByMonth)
-                    if (filterDataByMonth.length != '0') {
-                        $("#" + m.cle).val(filterDataByMonth[0].count);
-                    }
-                })
-            },
-            //error : function(response) {console.log(response.statusText);}
-            error: function (response) { console.log(response); alert(response.statusText); }
-        })
-    })
+
+$("#getSushi").click(function () {
+    var completeUrl = $("#completeSushiUrl").val();
+    console.log("[getSushi] URL complète utilisée :", completeUrl);
+    var reportId = sushiReportUrlSegment.filter(function (d) { return d.cle = $("#selected_sushi_report").val() }).map(function (d) { return d.mapReportId });
+    return $.ajax({
+        method: 'POST',
+        url: urlProxySushi + $("#selected_sushi_report").val(),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        data: { "url": completeUrl, "metric": $("#selected_metric").val() },
+        beforeSend: function () {
+            console.log("[getSushi] Démarrage de la requête AJAX...");
+            $("#loaderDiv").show();
+        },
+        success: function (response) {
+            $("#loaderDiv").hide();
+            // Logs de debug sur la réponse
+            console.log("[getSushi] Réponse brute reçue :", response);
+            console.log("[getSushi] Type de la réponse :", typeof response);
+            // Conversion en tableau si nécessaire
+            const responseArray = Array.isArray(response) ? response : (typeof response === 'object' && response !== null ? Object.values(response) : []);
+            console.log("[getSushi] Tableau utilisé pour le filtrage :", responseArray);
+
+            months.map(function (m) {
+                var filterDataByMonth = responseArray.filter(function (i) { return i.dimension === m.code });
+                console.log("[getSushi] Mois :", m.code, "| Données filtrées :", filterDataByMonth);
+                if (filterDataByMonth.length != 0) {
+                    $("#" + m.cle).val(filterDataByMonth[0].count);
+                }
+            });
+        },
+        error: function (response) { 
+            console.log("[getSushi] Erreur AJAX :", response); 
+            alert(response.statusText); 
+        }
+    });
+});
 
     function annualTotalStore(bdd, report) {
         return new DevExpress.data.CustomStore({
