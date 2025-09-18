@@ -92,9 +92,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 // routes_public : routes accessibles côté public/front-end, avec Passport pour la gestion de l’authentification.
 // Chaque route est initialisée avec l’instance app et, si besoin, passport.
 
-var routes_api = require('./api/routes/routes'); 
+const routes_api = require('./api/routes/routes'); 
 routes_api(app);
  
-var routes_public = require('./routes/routes')
+const routes_public = require('./routes/routes')
 routes_public(app,passport);
 
