@@ -1,77 +1,101 @@
 $(function () {
 	
+	// Détermine le mode édition selon le groupe utilisateur
 	let editMode = true;
     if ($('#usergroup').val() == "guest") {
       editMode = false
     }
 
+    /**
+     * Génère le tableau de suivi stats pour l'année sélectionnée
+     * Crée une entrée de suivi stats pour chaque ressource cochée en stats_collecte
+     */
     function batchLoad() {
         $.get(urlBdd).done(function(results){
             var data = results
                       .filter(function(d){
-                          return d.stats_collecte[$("#selectYear").dxSelectBox('instance').option('value')] // on 'affiche que les ressources qui ont l'année selectionnée cochée en gestion (champ stats_collecte)
+                          // On ne garde que les ressources qui ont stats_collecte activé pour l'année sélectionnée
+                          return d.stats_collecte[$("#selectYear").dxSelectBox('instance').option('value')]
                       }) 
                       .map(function(d){return d.id})
-            //data.map(function(d) {return console.log({"id":d,"annee":$("#selectYear").dxSelectBox('instance').option('value'),"etat":etatStatSaisie[0].cle})})
-            data.map(function(d) {return createItems(urlStatsSuivi, {"bdd_id":d,"annee":$("#selectYear").dxSelectBox('instance').option('value'),"etat":etatStatSaisie[0].cle})})
+            // Log de la génération des items
+            console.log("[batchLoad] Ressources sélectionnées pour stats :", data)
+            data.map(function(d) {
+                console.log({id: d, annee: $("#selectYear").dxSelectBox('instance').option('value'), etat: etatStatSaisie[0].cle})
+                return createItems(urlStatsSuivi, {
+                    "bdd_id": d,
+                    "annee": $("#selectYear").dxSelectBox('instance').option('value'),
+                    "etat": etatStatSaisie[0].cle
+                })
+            })
             dataGrid.refresh();
-                    })
+        })
     }
 
+    // Store des ressources BDD filtrées pour stats_collecte sur l'année sélectionnée
     var storeBdds = new DevExpress.data.CustomStore({  
         key: "id",
         loadMode: "raw",
         cacheRawData: false,
         load: function () {
-            //return getItems(urlBdd + "?gestion=1")
             var d = new $.Deferred();
             $.get(urlBdd).done(function(results){
-              var data = results
-                        .filter(function(d){
-                            return d.stats_collecte[$("#selectYear").dxSelectBox('instance').option('value')] // on 'affiche que les ressources qui ont l'année selectionnée cochée en gestion (champ stats_collecte)
-                        }) 
-                       
-            d.resolve(data)
-           })
-           return d.promise();
+                var data = results
+                    .filter(function(d){
+                        return d.stats_collecte[$("#selectYear").dxSelectBox('instance').option('value')]
+                    }) 
+                console.log("[storeBdds] Données chargées et filtrées :", data)
+                d.resolve(data)
+            })
+            return d.promise();
         } 
-      })  
+    })  
       
-      $("#selectYear").dxSelectBox({
+    // Sélecteur d'année
+    $("#selectYear").dxSelectBox({
         dataSource: years,
         value: years[8].cle,
         valueExpr: "cle",
         displayExpr: "valeur",
         onValueChanged: function (data) {
+            console.log("[selectYear] Année sélectionnée :", data.value)
             dataGrid.refresh();
             dataGrid.clearFilter();
             dataGrid.filter(["annee", "=", data.value]);
         }
     });
 
+    // Bouton pour générer un nouveau tableau pour l'année sélectionnée
     $("#newDataButton").dxButton({
         text: "Générer un nouveau tableau pour l'année sélectionnée",
         onClick: function () {
+            console.log("[newDataButton] Génération tableau stats pour l'année :", $("#selectYear").dxSelectBox('instance').option('value'))
             batchLoad();
         }
     });
 
+    // Store pour le suivi des stats
     var storeStatSuivi = new DevExpress.data.CustomStore({
         key: "id",
         load: function () {
+            console.log("[storeStatSuivi] Chargement suivi stats")
             return getItems(urlStatsSuivi)
         },
         update: function (key, values) {
+            console.log("[storeStatSuivi] Mise à jour", key, values)
             return updateItems(urlStatsSuivi, key, values);
         },
         insert: function (values) {
+            console.log("[storeStatSuivi] Insertion", values)
             return createItems(urlStatsSuivi, values);
         },
         remove: function (key) {
+            console.log("[storeStatSuivi] Suppression", key)
             return deleteItems(urlStatsSuivi, key);
         }
     });
 
+    // DataGrid principal de suivi stats
     var dataGrid =  $("#gridContainerSuiviStats").dxDataGrid({
         dataSource: storeStatSuivi,
         repaintChangesOnly: true,
@@ -117,28 +141,26 @@ $(function () {
             allowAdding: editMode,
             allowDeleting: editMode,
             useIcons: true,
-          },
+        },
         columns: [
             {
                 type: "buttons",
                 caption: "Actions",
                 buttons: ["edit","delete"]
             },
-             {
+            {
                 dataField: "bdd_id",
                 caption: "Ressource",
-                lookup:
-                {
+                lookup: {
                     dataSource: storeBdds,
                     valueExpr: "id",
                     displayExpr: "bdd"
                 }
             },
-			 {
+            {
                 dataField: "bdd_id",
                 caption: "Conforme Counter",
-                lookup:
-                {
+                lookup: {
                     dataSource: storeBdds,
                     valueExpr: "id",
                     displayExpr: "stats_counter"
@@ -148,8 +170,7 @@ $(function () {
             {
                 dataField: "bdd_id",
                 caption: "Modalité de collecte",
-                lookup:
-                {
+                lookup: {
                     dataSource: storeBdds,
                     valueExpr: "id",
                     displayExpr: "stats_get_mode"
@@ -186,25 +207,24 @@ $(function () {
                 dataField: "updatedAt",
                 caption: "Mise à jour le",
                 dataType: "date"
-            }],
-            onCellPrepared: function (e) {
-                if (e.rowType === "data") {
-                    if (e.column.dataField === "etat") {
-                        switch (e.data.etat) {
-                            case '1-vide':
-                                e.cellElement.css({ "background-color": "rgb(238, 76, 76)"});
-                                break;
-                            case '2-encours':
-                                e.cellElement.css({ "background-color": "rgb(236, 187, 217)"});
-                                break;
-                            case '3-fait':
-                                e.cellElement.css({ "background-color": "#C9ECD7"});
-                                break;
-                          }
+            }
+        ],
+        onCellPrepared: function (e) {
+            if (e.rowType === "data") {
+                if (e.column.dataField === "etat") {
+                    switch (e.data.etat) {
+                        case '1-vide':
+                            e.cellElement.css({ "background-color": "rgb(238, 76, 76)"});
+                            break;
+                        case '2-encours':
+                            e.cellElement.css({ "background-color": "rgb(236, 187, 217)"});
+                            break;
+                        case '3-fait':
+                            e.cellElement.css({ "background-color": "#C9ECD7"});
+                            break;
                     }
                 }
-            },
+            }
+        },
     }).dxDataGrid("instance");
-    
-
-    })
+});

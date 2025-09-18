@@ -1,86 +1,79 @@
 $(function(){
 	
+	// Détermine le mode édition selon le groupe utilisateur
 	let editMode = true;
     if ($('#usergroup').val() == "guest") {
       editMode = false
     }
 
-   var store = new DevExpress.data.CustomStore({
+    // Store principal pour les signalements
+    var store = new DevExpress.data.CustomStore({
         key: "id",
         load: function () {
-           return getItems(urlSignalementCustom)					
-                },
+            console.log("[storeSignalement] Chargement des signalements");
+            return getItems(urlSignalementCustom)
+        },
         update: function(key, values) {
-			return updateItems(urlSignalement,key,values);
-        }  ,
+            console.log("[storeSignalement] Mise à jour :", key, values);
+            return updateItems(urlSignalement,key,values);
+        },
         insert: function(values) {
+            console.log("[storeSignalement] Insertion :", values);
             return createItems(urlSignalement,values);
         },  
         remove: function(key) {
+            console.log("[storeSignalement] Suppression :", key);
             return deleteItems(urlSignalement,key);
         }       
     });
 
+    // Store pour les ressources BDD
     var storeBdd = new DevExpress.data.CustomStore({
         key: "id",
         load: function () {
-           return getItems(urlBdd)					
-                },
+            console.log("[storeBdd] Chargement BDD");
+            return getItems(urlBdd)
+        },
         update: function (key, values) {
-           return updateItems(urlBdd, key, values);
+            console.log("[storeBdd] Mise à jour :", key, values);
+            return updateItems(urlBdd, key, values);
         }      
     });
 
+    // DataGrid principal des signalements
     $("#gridContainerSignalement").dxDataGrid({
         dataSource: store,
         showBorders: true,
         repaintChangesOnly: true,
-        showBorders: true,
         rowAlternationEnabled: true,
         columnResizingMode: "nextColumn",
         allowColumnReordering: true,
         columnMinWidth: 50,
         columnAutoWidth: true,
         columnHidingEnabled: true,
-        columnChooser: {
-         enabled: true,
-         mode:"select"
-        },
+        columnChooser: { enabled: true, mode:"select" },
         scrolling: {
             useNative: false,
             scrollByContent: true,
             scrollByThumb: true,
-            showScrollbar: "onHover" // or "onScroll" | "always" | "never"
+            showScrollbar: "onHover"
         },
-        sorting: {
-            mode: "multiple"
-        },
-        paging: {
-            pageSize: 10
-        },
+        sorting: { mode: "multiple" },
+        paging: { pageSize: 10 },
         pager: {
             showPageSizeSelector: true,
             allowedPageSizes: [10, 20, 50,100,150],
             showInfo: true
         },
-        headerFilter: {
-            visible: true
-        },
-        filterRow: {
-            visible: true
-        },
+        headerFilter: { visible: true },
+        filterRow: { visible: true },
         filterPanel: { visible: true },
-        searchPanel: {
-            visible: true
-        },
+        searchPanel: { visible: true },
         groupPanel: {
             emptyPanelText: "Drag & Drop colonnes pour effectuer des regroupements",
             visible: true
         },
-        "export": {
-          enabled: true,
-          fileName: "Bdds_signalement"
-         },
+        "export": { enabled: true, fileName: "Bdds_signalement" },
         editing: {
             mode: "popup",
             popup: {
@@ -92,281 +85,286 @@ $(function(){
             form: {
                 items: [
                     {
-                    itemType: "group",
-                    colCount: 2,
-                    colSpan: 2,
-                    caption: "Données Primo",
-                    items: ["bdd_id", "icone", "nom_court", "source", "url", "proxified_url", "editeur", 
-					    { dataField: "disc", helpText: "Exemple: Arts$Sciences humaines$Littérature" }, 
-                        { dataField: "langue", helpText: "Exemple: fre ; Exemple: eng" },
-                        { dataField: "type_contenu", helpText: "Exemple: Revues$Données scientifiques" }, 
-					 "type_acces", "note_acces",{
-                        dataField: "description",
-                        editorType: "dxTextArea",
+                        itemType: "group",
+                        colCount: 2,
                         colSpan: 2,
-                        editorOptions: {
-                            height: 50
-                        }
-                    }, "type_base", "tuto", "new", "alltitles"]
+                        caption: "Données Primo",
+                        items: [
+                            "bdd_id", "icone", "nom_court", "source", "url", "proxified_url", "editeur",
+                            { dataField: "disc", helpText: "Exemple: Arts$Sciences humaines$Littérature" },
+                            { dataField: "langue", helpText: "Exemple: fre ; Exemple: eng" },
+                            { dataField: "type_contenu", helpText: "Exemple: Revues$Données scientifiques" },
+                            "type_acces", "note_acces",
+                            {
+                                dataField: "description",
+                                editorType: "dxTextArea",
+                                colSpan: 2,
+                                editorOptions: { height: 50 }
+                            },
+                            "type_base", "tuto", "new", "alltitles"
+                        ]
                     },
                     {
                         itemType: "group",
                         colCount: 2,
                         colSpan: 2,
                         caption: "Infos locales",
-                        items: ["uca", "mode_consultation",
-                        {
-                          dataField: "description_long",
-                          editorType: "dxTextArea",
-                          colSpan: 2,
-                          editorOptions: {
-                              height: 50
-                          }
-                      },
-                        {
-                            dataField: "commentaire",
-                            editorType: "dxTextArea",
-                            colSpan: 2,
-                        },"createdAt","updatedAt"]
-                        }
+                        items: [
+                            "uca", "mode_consultation",
+                            {
+                                dataField: "description_long",
+                                editorType: "dxTextArea",
+                                colSpan: 2,
+                                editorOptions: { height: 50 }
+                            },
+                            {
+                                dataField: "commentaire",
+                                editorType: "dxTextArea",
+                                colSpan: 2,
+                            },
+                            "createdAt","updatedAt"
+                        ]
+                    }
                 ]
             },
             allowUpdating: editMode,
             allowAdding: editMode,
             allowDeleting: editMode,
             useIcons: true
-             },
+        },
         columns: [
-         {
-            type: "buttons",
-            caption: "Editer",
-            width: 110,
-            buttons: ["edit", "delete", {
-                hint: "Clone",
-                icon: "repeat",
-                onClick: function(e) {
-					 if ($('#usergroup').val() != "guest") {
-                    var clonedItem = $.extend({}, e.row.data, { id: "" });
-                    var filtered = _.pick(clonedItem, function (v) { return v !== '' && v !== null; });
-                    createItems(urlSignalement, filtered)
-                    e.component.refresh(true);
-                    e.event.preventDefault();
-					 }
-                }
-            }]
+            {
+                type: "buttons",
+                caption: "Editer",
+                width: 110,
+                buttons: ["edit", "delete", {
+                    hint: "Clone",
+                    icon: "repeat",
+                    onClick: function(e) {
+                        if ($('#usergroup').val() != "guest") {
+                            var clonedItem = $.extend({}, e.row.data, { id: "" });
+                            var filtered = _.pick(clonedItem, function (v) { return v !== '' && v !== null; });
+                            console.log("[gridContainerSignalement] Clonage signalement :", filtered);
+                            createItems(urlSignalement, filtered)
+                            e.component.refresh(true);
+                            e.event.preventDefault();
+                        }
+                    }
+                }]
             },
-      {
-        dataField: "bdd_id",
-        caption: "Ressource",
-        lookup: 
-        {
-            dataSource: new DevExpress.data.CustomStore({
-                key: "id",
-                loadMode: "raw",
-        load: function() {
-            return getItems(urlBdd)
+            {
+                dataField: "bdd_id",
+                caption: "Ressource",
+                lookup: {
+                    dataSource: new DevExpress.data.CustomStore({
+                        key: "id",
+                        loadMode: "raw",
+                        load: function() { return getItems(urlBdd) }
+                    }),
+                    valueExpr: "id",
+                    displayExpr: "bdd"
+                }
+            },
+            {
+                dataField: "icone",
+                caption: "Icone",
+                width: 100,
+                allowFiltering: false,
+                allowSorting: false,
+                cellTemplate: function (container, options) {
+                    $("<div>")
+                        .append($("<img>", { "src": "http://catalogue.unice.fr/primo_library/libweb/images/icones_bdd/"+options.value }))
+                        .appendTo(container);
+                }
+            },
+            {
+                dataField: "nom_court",
+                caption: "Nom court",
+                visible: false
+            },
+            {
+                dataField: "source",
+                caption: "Source (diffuseur)",
+                validationRules: [{ type: "required" }]
+            },
+            {
+                dataField: "url",
+                caption: "URL"
+            },
+            {
+                dataField: "proxified_url",
+                caption: "URL proxifiée",
+                validationRules: [{ type: "required" }]
+            },
+            {
+                dataField: "editeur",
+                caption: "Editeur",
+                validationRules: [{ type: "required" }]
+            },
+            {
+                dataField: "disc",
+                caption: "Discipline(s)",
+                width: 200,
+                allowSorting: false,
+            },
+            {
+                dataField: "langue",
+                caption: "Langue",
+            },
+            {
+                dataField: "type_contenu",
+                caption: "Type de contenu",
+            },
+            {
+                dataField: "type_acces",
+                caption: "Type d'accès",
+                lookup: {
+                    dataSource: accessState,
+                    displayExpr: "valeur",
+                    valueExpr: "cle"
+                }
+            },
+            {
+                dataField: "note_acces",
+                caption: "Note sur l'accès"
+            },
+            {
+                dataField: "description",
+                caption: "Description",
+                validationRules: [{ type: "required" }]
+            },
+            {
+                dataField: "type_base",
+                caption: "Type de base",
+                lookup: {
+                    dataSource: typeBase,
+                    displayExpr: "valeur",
+                    valueExpr: "cle"
+                }
+            },
+            {
+                dataField: "tuto",
+                caption: "Tutoriel",
+            },
+            {
+                dataField: "new",
+                caption: "Nouveauté ([Obsolète] ne plus remplir)",
+            },
+            {
+                dataField: "alltitles",
+                caption: "Lien tous titres",
+            },
+            {
+                dataField: "uca",
+                caption: "Accès membres UCA"
+            },
+            {
+                dataField: "mode_consultation",
+                caption: "Mode de consultation"
+            },
+            {
+                dataField: "description_long",
+                caption: "Description détaillée"
+            },
+            {
+                dataField: "commentaire",
+                caption: "Commentaire"
+            },
+            {
+                dataField: "createdAt",
+                caption: "Crée le",
+                visible: false,
+            },
+            {
+                dataField: "updatedAt",
+                caption: "Modifié le"
+            }
+        ],
+        masterDetail: {
+            enabled: editMode,
+            template: function(container, options) { 
+                var currentBdd = options.data;
+                $("<div>")
+                    .addClass("master-detail-caption")
+                    .text("Informations niveau haut configuration")
+                    .appendTo(container);
+
+                $("<div>")
+                    .dxDataGrid({
+                        columnAutoWidth: true,
+                        showBorders: true,
+                        editing: {
+                            mode: "popup",
+                            allowUpdating: true,
+                            useIcons: true
+                        },
+                        columns: [
+                            {
+                                dataField: "achat_perenne",
+                                caption: "Achat pérenne",
+                                lookup: {
+                                    dataSource: achatperenneState,
+                                    displayExpr: "valeur",
+                                    valueExpr: "cle"
+                                }
+                            },
+                            {
+                                dataField: "type_marche",
+                                caption: "Type de marché",
+                                lookup: {
+                                    dataSource: marcheState,
+                                    displayExpr: "valeur",
+                                    valueExpr: "cle"
+                                }
+                            },
+                            {
+                                dataField: "type_achat",
+                                caption: "Type d'achat'",
+                                lookup: {
+                                    dataSource: typeAchatState,
+                                    displayExpr: "valeur",
+                                    valueExpr: "cle"
+                                }
+                            },
+                            {
+                                dataField: "type_signalement",
+                                caption: "Type de signalement",
+                                lookup: {
+                                    dataSource: typeSignalement,
+                                    displayExpr: "valeur",
+                                    valueExpr: "cle"
+                                }
+                            },
+                            {
+                                dataField: "mode_signalement",
+                                caption: "Modalité de signalement (du titre à titre)",
+                                lookup: {
+                                    dataSource: modeSignalement,
+                                    displayExpr: "valeur",
+                                    valueExpr: "cle"
+                                }
+                            },
+                            {
+                                dataField: "stats_get_mode",
+                                caption: "Statistiques",
+                                lookup: {
+                                    dataSource: getStatState,
+                                    displayExpr: "valeur",
+                                    valueExpr: "cle"
+                                }
+                            }
+                        ],
+                        dataSource: new DevExpress.data.DataSource({
+                            store: storeBdd,
+                            filter: ["id", "=", currentBdd.bdd_id]
+                        })
+                    }).appendTo(container);
+            }
         }
-      })		,
-            valueExpr: "id",
-            displayExpr: "bdd"
-        }
-      }, 
-      {
-        dataField: "icone",
-        caption: "Icone",
-        width: 100,
-        allowFiltering: false,
-        allowSorting: false,
-        cellTemplate: function (container, options) {
-            $("<div>")
-                .append($("<img>", { "src": "http://catalogue.unice.fr/primo_library/libweb/images/icones_bdd/"+options.value }))
-                .appendTo(container);
-        }
-      },
-      {
-        dataField: "nom_court",
-        caption: "Nom court",
-        visible: false
-      }, 
-      {
-        dataField: "source",
-        caption: "Source (diffuseur)",
-        validationRules: [{ type: "required" }]
-      },
-      {
-        dataField: "url",
-        caption: "URL"
-      },
-      {
-        dataField: "proxified_url",
-        caption: "URL proxifiée",
-        validationRules: [{ type: "required" }]
-      },
-      {
-        dataField: "editeur",
-        caption: "Editeur",
-        validationRules: [{ type: "required" }]
-      },
-      {
-        dataField: "disc",
-        caption: "Discipline(s)",
-        width: 200,
-        allowSorting: false,
-        //validationRules: [{ type: "required" }],
-      },
-      {
-        dataField: "langue",
-        caption: "Langue",
-      },
-      {
-        dataField: "type_contenu",
-        caption: "Type de contenu",
-      },
-      {
-        dataField: "type_acces",
-        caption: "Type d'accès",
-        lookup: {
-            dataSource: accessState,
-            displayExpr: "valeur",
-            valueExpr: "cle"
-        }
-      },
-      {
-        dataField: "note_acces",
-        caption: "Note sur l'accès"
-      },
-      {
-        dataField: "description",
-        caption: "Description",
-		validationRules: [{ type: "required" }]
-      },
-      {
-        dataField: "type_base",
-        caption: "Type de base",
-        lookup: {
-            dataSource: typeBase,
-            displayExpr: "valeur",
-            valueExpr: "cle"
-        }
-      },
-      {
-        dataField: "tuto",
-        caption: "Tutoriel",
-      },
-      {
-        dataField: "new",
-        caption: "Nouveauté ([Obsolète] ne plus remplir)",
-      },
-      {
-        dataField: "alltitles",
-        caption: "Lien tous titres",
-      },
-      {
-        dataField: "uca",
-        caption: "Accès membres UCA"
-      },
-      {
-        dataField: "mode_consultation",
-        caption: "Mode de consultation"
-      },
-      {
-        dataField: "description_long",
-        caption: "Description détaillée"
-      },
-      {
-        dataField: "commentaire",
-        caption: "Commentaire"
-      },
-      {
-        dataField: "createdAt",
-        caption: "Crée le",
-        visible: false,
-      },
-      {
-        dataField: "updatedAt",
-        caption: "Modifié le"
-      }],
-      masterDetail: {
-          enabled: editMode,
-          template: function(container, options) { 
-              var currentBdd = options.data;
-              $("<div>")
-                  .addClass("master-detail-caption")
-                  .text("Informations niveau haut configuration")
-                  .appendTo(container);
-      
-              $("<div>")
-                  .dxDataGrid({
-                      columnAutoWidth: true,
-                      showBorders: true,
-                      editing: {
-                          mode: "popup",
-                          allowUpdating: true,
-                          useIcons: true},
-                      columns: [{
-                          dataField: "achat_perenne",
-                          caption: "Achat pérenne",
-                          lookup: {
-                              dataSource: achatperenneState,
-                              displayExpr: "valeur",
-                              valueExpr: "cle"
-                          }
-                      },
-                      {
-                          dataField: "type_marche",
-                          caption: "Type de marché",
-                          lookup: {
-                              dataSource: marcheState,
-                              displayExpr: "valeur",
-                              valueExpr: "cle"
-                          }
-                      },
-                      {
-                          dataField: "type_achat",
-                          caption: "Type d'achat'",
-                          lookup: {
-                              dataSource: typeAchatState,
-                              displayExpr: "valeur",
-                              valueExpr: "cle"
-                          }
-                      },
-                      {
-                          dataField: "type_signalement",
-                          caption: "Type de signalement",
-                          lookup: {
-                              dataSource: typeSignalement,
-                              displayExpr: "valeur",
-                              valueExpr: "cle"
-                          }
-                      },
-                      {
-                          dataField: "mode_signalement",
-                          caption: "Modalité de signalement (du titre à titre)",
-                          lookup: {
-                              dataSource: modeSignalement,
-                              displayExpr: "valeur",
-                              valueExpr: "cle"
-                          }
-                      },
-                      {
-                          dataField: "stats_get_mode",
-                          caption: "Statistiques",
-                          lookup: {
-                              dataSource: getStatState,
-                              displayExpr: "valeur",
-                              valueExpr: "cle"
-                          }
-                      },],
-                      dataSource: new DevExpress.data.DataSource({
-                          store: storeBdd,
-                          filter: ["id", "=", currentBdd.bdd_id]
-                      })
-                  }).appendTo(container);
-          }
-      }
-      })
+    })
 	
-	$("#file-uploader").dxFileUploader({
+    // Uploader pour importer les fichiers signalement
+    $("#file-uploader").dxFileUploader({
         name: "file",
         selectButtonText: "Importer un fichier",
         labelText: "",
@@ -375,9 +373,11 @@ $(function(){
         uploadUrl: urlSignalement + "_import"
     });
 
+    // Liste des fichiers importés affichée
     getItems(urlSignalement + "_readdir").done(function(result){
-        return result.map(function(d){$("#files-dirread").append("<li>"+d.file+"</li>")})
+        result.map(function(d){
+            $("#files-dirread").append("<li>"+d.file+"</li>")
+        })
     })
    
 });
-    
