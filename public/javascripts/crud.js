@@ -48,15 +48,15 @@ export function handleError(jqXHR, textStatus, errorThrown) {
  * @param {String} url - L'URL de l'API à interroger
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
-export function getItems(url){
-    return $.ajax({
-        method: 'GET',
-        url: url
-    })
-    // Gère la réponse en loguant le succès
-    .then(response => handleResponse(response, "GET"))
-    // Gère l'erreur en loguant le détail
-    .catch(handleError);
+export function getItems(url) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            method: 'GET',
+            url: url,
+            success: (response) => resolve(handleResponse(response, "GET")),
+            error: (jqXHR, textStatus, errorThrown) => reject(handleError(jqXHR, textStatus, errorThrown))
+        });
+    });
 }
 
 /**
