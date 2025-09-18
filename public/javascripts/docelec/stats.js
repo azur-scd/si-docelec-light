@@ -1,9 +1,12 @@
 $(function () {
 	
+    // Masque le panel-footer pour les invités
     if ($('#usergroup').val() == "guest") {
       $(".panel-footer").hide()
     }
 	
+    // Logs pour l'initialisation
+    console.log("[init] Lancement des requêtes initiales stats")
     getAvalaibleReports($("#selected_bdd").val())
     getFormData($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val())
     getSushiParam($("#selected_bdd").val())
@@ -11,45 +14,54 @@ $(function () {
     monthTotalLine($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val())
     indicators($("#selected_bdd").val(), $("#selected_report").val())
 
+    // Store BDD filtrant sur stats_collecte année sélectionnée
     var storeBdd = new DevExpress.data.CustomStore({
         loadMode: "raw",
         load: function () {
             var d = new $.Deferred();
             $.get(urlBdd).done(function(results){
-              var data = results
-                        .filter(function(d){
-                            return d.stats_collecte[$("#selectbox-years").dxSelectBox('instance').option('value')]
-                        }) // affiche les bdds du menu déroulant si la adte sélectionnée est cochée dans le json stats_collecte
-                       
-            d.resolve(data)
-           })
-           return d.promise();
+                var data = results
+                    .filter(function(d){
+                        return d.stats_collecte[$("#selectbox-years").dxSelectBox('instance').option('value')]
+                    }) // affiche les bdds du menu déroulant si la date sélectionnée est cochée dans le json stats_collecte
+                console.log("[storeBdd] Données chargées et filtrées :", data)
+                d.resolve(data)
+            })
+            return d.promise();
         }
     });
 
+    // Store stats CRUD
     var storeStats = new DevExpress.data.CustomStore({
         key: "id",
         load: function () {
+            console.log("[storeStats] Chargement stats")
             return getItems(urlStats)
         },
         update: function (key, values) {
+            console.log("[storeStats] Mise à jour :", key, values)
             return updateItems(urlStats, key, values);
         },
         insert: function (values) {
+            console.log("[storeStats] Insertion :", values)
             return createItems(urlStats, values);
         },
         remove: function (key) {
+            console.log("[storeStats] Suppression :", key)
             return deleteItems(urlStats, key);
         }
     });
 
+    // Store des rapports stats
     var storeStatsReports = new DevExpress.data.CustomStore({
         loadMode: "raw",
         load: function () {
+            console.log("[storeStatsReports] Chargement stats reports")
             return getItems(urlStatsReports);
         }
     });
 
+    // Sélecteur d'année
     $("#selectbox-years").dxSelectBox({
         width: 150,
         items: years,
@@ -57,6 +69,7 @@ $(function () {
         displayExpr: "valeur",
         value: parseInt($("#selected_year").val()),
         onValueChanged: function (data) {
+            console.log("[selectbox-years] Année sélectionnée :", data.value)
             $("#selected_year").val(data.value)
             $("#selectbox-bdd").dxSelectBox("getDataSource").reload(); // reload du select bdds en fonction de l'année sélectionnée
             return getFormData($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val()),
@@ -64,6 +77,7 @@ $(function () {
         }
     });
 
+    // Sélecteur BDD
     $("#selectbox-bdd").dxSelectBox({
         dataSource: storeBdd,
         valueExpr: "id",
@@ -72,6 +86,7 @@ $(function () {
         searchEnabled: true,
         isRequired: true,
         onValueChanged: function (data) {
+            console.log("[selectbox-bdd] BDD sélectionnée :", data.value)
             $("#selected_bdd").val(data.value)
             return getAvalaibleReports($("#selected_bdd").val()),
 			    getFormData($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val()),
@@ -83,6 +98,7 @@ $(function () {
         validationRules: [{ type: 'required' }]
     });
 
+    // Sélecteur de rapport stats
     $("#selectbox-reports").dxSelectBox({
         dataSource: storeStatsReports,
         valueExpr: "id",
@@ -93,6 +109,7 @@ $(function () {
             message: "Name is required"
         }],
         onValueChanged: function (data) {
+            console.log("[selectbox-reports] Rapport sélectionné :", data.value)
             $("#selected_report").val(data.value)
             return getFormData($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val()),
                 annualTotalBar($("#selected_bdd").val(), $("#selected_report").val()),
@@ -100,7 +117,9 @@ $(function () {
         }
     });
 
+    // Bouton pour enregistrer le formulaire
     $("#insertFormData").click(function () {
+        console.log("[insertFormData] Enregistrement des données du formulaire")
         months.map(function (m) {
             if ($("#id_" + m.cle).val() != '') {
                 return updateItems(urlStats, $("#id_" + m.cle).val(), { "count": $("#" + m.cle).val() });
@@ -122,26 +141,32 @@ $(function () {
             monthTotalLine($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val())
     })
 
+    // Bouton calculer le total annuel
     $("#calculateTotal").click(function () {
+        console.log("[calculateTotal] Calcul du total annuel")
         return calculateSum()
     })
 	
-	 function getAvalaibleReports(bdd){
+    // Affiche les rapports disponibles pour une ressource
+    function getAvalaibleReports(bdd){
         $("#avalaibleReports").empty()
         return getItems(urlBddUniqueStatsReports + "/bddid/" + bdd)
         .done(function (result) {
-            console.log(result)
+            console.log("[getAvalaibleReports] Rapports disponibles :", result)
             $("#avalaibleReports").append("Statistiques disponibles (déjà collectées) pour cette ressource : ")
-            result.map(function(d){return $("#avalaibleReports").append("<span class='label label-danger label-form' style='margin-right:5px;'>"+d.StatReport.mesure+"</span>")})
+            result.map(function(d){
+                return $("#avalaibleReports").append("<span class='label label-danger label-form' style='margin-right:5px;'>"+d.StatReport.mesure+"</span>")
+            })
         })
     }
 
+    // Récupère et affiche les données de formulaire pour BDD/année/rapport
     function getFormData(year, bdd, report) {
-        //cleanIds();
         $("#form").empty()
         displayForm();
         return getItems(urlFormStats + "/?bddId=" + bdd + "&reportId=" + report + "&year=" + year)
             .done(function (data) {
+                console.log("[getFormData] Données reçues :", data)
                 if (typeof year !== "undefined" && typeof bdd !== "undefined" && typeof report !== "undefined" && data.length != 0) {
                     $("#alertData").hide()
                     months.map(function (m) {
@@ -163,43 +188,41 @@ $(function () {
                 }
             })
     }
+
+    // Affiche le formulaire (un champ par mois)
     function displayForm() {
-        // $("#form").empty()
         months.map(function (m) {
-            $("#form").append("<div class='form-group'><label for='" + m.cle + "' class='control-label col-md-4'>" + m.valeur + "</label><div class='col-md-6'><input type='text' class='form-control' id='" + m.cle + "' /><input type='hidden' id='id_" + m.cle + "' value='' /></div></div>")
+            $("#form").append("<div class='form-group'><label for='" + m.cle + "' class='control-label col-md-4'>" + m.valeur + "</label><div class='col-md-6'><input type='text' class='form-control' id='" + m.cle + "'><input type='hidden' id='id_" + m.cle + "'></div></div>")
         })
     }
 
+    // Calcule la somme annuelle
     function calculateSum() {
         var sum = 0;
-        //iterate through each textboxes and add the values
         $("#janvier,#fevrier,#mars,#avril,#mai,#juin,#juillet,#aout,#septembre,#octobre,#novembre,#decembre").each(function () {
-            //add only if the value is number
             if (!isNaN(this.value) && this.value.length != 0) {
                 sum += parseInt(this.value);
             }
         });
-        //final sum
         $("#total").val(sum);
     }
 
-
-
+    // Récupère et affiche les paramètres Sushi pour la BDD
     function getSushiParam(id) {
         return getItems(urlBdd + "/" + id)
             .done(function (result) {
-                /* on remet ici les valeurs de l'array sushiReportUrlSegment car blocage dans l'UI sinon ?*/
-                 var sushiReportUrlSegment = [
-                { "cle": "0-tr_j1", "metric":"Total_Item_Requests","valeur": "Revues - Téléchargements (tr_j1) - Total Item Requests", "mapReportId": 1 },
-                { "cle": "1-tr_j1",  "metric":"Unique_Item_Requests", "valeur": "Revues - Téléchargements (tr_j1) - Unique Item Requests", "mapReportId": 8 },
-                { "cle": "2-tr_b1",  "metric":"Total_Item_Requests", "valeur": "Ebooks - Téléchargements (tr_b1)  - Total Item Requests", "mapReportId": 1 },
-                { "cle": "3-tr_b1",  "metric":"Unique_Item_Requests", "valeur": "Ebooks - Téléchargements (tr_b1)  - Unique Item Requests", "mapReportId": 8 },
-                { "cle": "4-pr_p1",  "metric":"Searches_Platform","valeur": "Plateformes - Recherches (pr_p1)", "mapReportId": 4 },
-                { "cle": "5-pr_p1", "metric":"Total_Item_Requests","valeur": "Plateformes - Téléchargements (pr_j1) - Total Item Requests", "mapReportId": 1 },
-                { "cle": "6-pr_p1",  "metric":"Unique_Item_Requests", "valeur": "Plateformes - Téléchargements (pr_p1) - Unique Item Requests", "mapReportId": 8 },
-                { "cle": "7-tr_j2",  "metric":"Total_Item_Requests", "valeur": "Revues - Refus d'accès (tr_j2)", "mapReportId": 3 },       
-                { "cle": "8-tr_b2",  "metric":"Total_Item_Requests", "valeur": "Ebooks - Refus d'accès (tr_b2)", "mapReportId": 3 },
-                { "cle": "9-dr_d1", "valeur": "Base de données - Recherches (dr_d1)", "mapReportId": 4 },
+                // On remet ici les valeurs de l'array sushiReportUrlSegment car blocage dans l'UI sinon ?
+                var sushiReportUrlSegment = [
+                    { "cle": "0-tr_j1", "metric":"Total_Item_Requests","valeur": "Revues - Téléchargements (tr_j1) - Total Item Requests", "mapReportId": 1 },
+                    { "cle": "1-tr_j1",  "metric":"Unique_Item_Requests", "valeur": "Revues - Téléchargements (tr_j1) - Unique Item Requests", "mapReportId": 8 },
+                    { "cle": "2-tr_b1",  "metric":"Total_Item_Requests", "valeur": "Ebooks - Téléchargements (tr_b1)  - Total Item Requests", "mapReportId": 1 },
+                    { "cle": "3-tr_b1",  "metric":"Unique_Item_Requests", "valeur": "Ebooks - Téléchargements (tr_b1)  - Unique Item Requests", "mapReportId": 8 },
+                    { "cle": "4-pr_p1",  "metric":"Searches_Platform","valeur": "Plateformes - Recherches (pr_p1)", "mapReportId": 4 },
+                    { "cle": "5-pr_p1", "metric":"Total_Item_Requests","valeur": "Plateformes - Téléchargements (pr_j1) - Total Item Requests", "mapReportId": 1 },
+                    { "cle": "6-pr_p1",  "metric":"Unique_Item_Requests", "valeur": "Plateformes - Téléchargements (pr_p1) - Unique Item Requests", "mapReportId": 8 },
+                    { "cle": "7-tr_j2",  "metric":"Total_Item_Requests", "valeur": "Revues - Refus d'accès (tr_j2)", "mapReportId": 3 },       
+                    { "cle": "8-tr_b2",  "metric":"Total_Item_Requests", "valeur": "Ebooks - Refus d'accès (tr_b2)", "mapReportId": 3 },
+                    { "cle": "9-dr_d1", "valeur": "Base de données - Recherches (dr_d1)", "mapReportId": 4 },
                 ]
                 if (result.stats_get_mode == "sushi") {
                     $("#sushiPanel").show()
@@ -232,7 +255,6 @@ $(function () {
                         onValueChanged: function (data) {
                             var date = formatingDate(data.value)
                             $("#beginSushiDate").val(date)
-                            //$("#beginSushiDate").val(data.value.toISOString().substring(0, 10)); 
                             createSushiUrl($("#beginSushiDate").val(), $("#endSushiDate").val(), $("#selected_sushi_report").val())
                             $("#selectbox-years")  
                             .dxSelectBox("instance")  
@@ -257,6 +279,7 @@ $(function () {
             })
     }
 
+    // Génère l'URL Sushi complète
     function createSushiUrl(start, end, sushi_url_segment) {
         var obj = {}; var resourceSushi; var completeUrl;
 
@@ -278,13 +301,14 @@ $(function () {
         obj["begin_date"] = start
         obj["end_date"] = end
         completeUrl = resourceSushi + "?" + getDataEncoded(obj)
+        console.log("[createSushiUrl] URL générée :", completeUrl)
         return $("#completeSushiUrl").val(completeUrl)
-        //return completeUrl
     }
 
+    // Bouton test Sushi
     $("#testSushi").click(function () {
         var completeUrl = $("#completeSushiUrl").val()
-        console.log(completeUrl)
+        console.log("[testSushi] URL test :", completeUrl)
         var reportId = sushiReportUrlSegment.filter(function (d) { return d.cle = $("#selected_sushi_report").val() }).map(function (d) { return d.mapReportId })
         return $.ajax({
             method: 'POST',
@@ -298,49 +322,49 @@ $(function () {
                 $("#loaderDiv").hide();
                 alert(JSON.stringify(response))
             },
-            //error : function(response) {console.log(response.statusText);}
             error: function (response) { console.log(response); alert(response.statusText); }
         })
     })
 
+    // Bouton récupération Sushi avec logs détaillés
+    $("#getSushi").click(function () {
+        var completeUrl = $("#completeSushiUrl").val();
+        console.log("[getSushi] URL complète utilisée :", completeUrl);
+        var reportId = sushiReportUrlSegment.filter(function (d) { return d.cle = $("#selected_sushi_report").val() }).map(function (d) { return d.mapReportId });
+        return $.ajax({
+            method: 'POST',
+            url: urlProxySushi + $("#selected_sushi_report").val(),
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            data: { "url": completeUrl, "metric": $("#selected_metric").val() },
+            beforeSend: function () {
+                console.log("[getSushi] Démarrage de la requête AJAX...");
+                $("#loaderDiv").show();
+            },
+            success: function (response) {
+                $("#loaderDiv").hide();
+                // Logs de debug sur la réponse
+                console.log("[getSushi] Réponse brute reçue :", response);
+                console.log("[getSushi] Type de la réponse :", typeof response);
+                // Conversion en tableau si nécessaire
+                const responseArray = Array.isArray(response) ? response : (typeof response === 'object' && response !== null ? Object.values(response) : []);
+                console.log("[getSushi] Tableau utilisé pour le filtrage :", responseArray);
 
-$("#getSushi").click(function () {
-    var completeUrl = $("#completeSushiUrl").val();
-    console.log("[getSushi] URL complète utilisée :", completeUrl);
-    var reportId = sushiReportUrlSegment.filter(function (d) { return d.cle = $("#selected_sushi_report").val() }).map(function (d) { return d.mapReportId });
-    return $.ajax({
-        method: 'POST',
-        url: urlProxySushi + $("#selected_sushi_report").val(),
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        data: { "url": completeUrl, "metric": $("#selected_metric").val() },
-        beforeSend: function () {
-            console.log("[getSushi] Démarrage de la requête AJAX...");
-            $("#loaderDiv").show();
-        },
-        success: function (response) {
-            $("#loaderDiv").hide();
-            // Logs de debug sur la réponse
-            console.log("[getSushi] Réponse brute reçue :", response);
-            console.log("[getSushi] Type de la réponse :", typeof response);
-            // Conversion en tableau si nécessaire
-            const responseArray = Array.isArray(response) ? response : (typeof response === 'object' && response !== null ? Object.values(response) : []);
-            console.log("[getSushi] Tableau utilisé pour le filtrage :", responseArray);
-
-            months.map(function (m) {
-                var filterDataByMonth = responseArray.filter(function (i) { return i.dimension === m.code });
-                console.log("[getSushi] Mois :", m.code, "| Données filtrées :", filterDataByMonth);
-                if (filterDataByMonth.length != 0) {
-                    $("#" + m.cle).val(filterDataByMonth[0].count);
-                }
-            });
-        },
-        error: function (response) { 
-            console.log("[getSushi] Erreur AJAX :", response); 
-            alert(response.statusText); 
-        }
+                months.map(function (m) {
+                    var filterDataByMonth = responseArray.filter(function (i) { return i.dimension === m.code });
+                    console.log("[getSushi] Mois :", m.code, "| Données filtrées :", filterDataByMonth);
+                    if (filterDataByMonth.length != 0) {
+                        $("#" + m.cle).val(filterDataByMonth[0].count);
+                    }
+                });
+            },
+            error: function (response) { 
+                console.log("[getSushi] Erreur AJAX :", response); 
+                alert(response.statusText); 
+            }
+        });
     });
-});
 
+    // Store total annuel
     function annualTotalStore(bdd, report) {
         return new DevExpress.data.CustomStore({
             key: "id",
@@ -350,15 +374,16 @@ $("#getSushi").click(function () {
                         var result = data.map(function (d) {
                             return { "date": d.periodeDebut.substring(0, 4), "total": d.count }
                         })
-                            .sort(function (a, b) {
-                                return a.date - b.date;
-                            })
+                        .sort(function (a, b) {
+                            return a.date - b.date;
+                        })
                         return result
                     })
             }
         });
     }
 
+    // Store total mensuel
     function monthlyTotalStore(year, bdd, report) {
         return new DevExpress.data.CustomStore({
             key: "id",
@@ -381,6 +406,8 @@ $("#getSushi").click(function () {
             }
         })
     }
+
+    // Store pour les données de gestion (facturé)
     function gestionData(bdd) {
         return new DevExpress.data.CustomStore({
             key: "id",
@@ -403,6 +430,7 @@ $("#getSushi").click(function () {
         })
     }
 
+    // Affichage des graphiques
     function annualTotalBar(bdd, report) {
         return getSimpleBar("totalBarChart", annualTotalStore(bdd, report), "date", "total", "date", "")
     }
@@ -413,9 +441,12 @@ $("#getSushi").click(function () {
     }
 
     function indicators(bdd, report) {
+        // Possibilité d'afficher les indicateurs ici
         //console.log(annualTotalStore(bdd,report))
         //console.log(gestionData(bdd))
     }
+
+    // Nettoyage des IDs mensuels
     function cleanIds() {
         $("input[id^=id_]").each(function () {
             if ($(this).val() != '') {
