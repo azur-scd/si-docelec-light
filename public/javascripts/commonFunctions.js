@@ -1,157 +1,157 @@
-function getDataEncoded(jsonData){
-    var formBody = [];
-    for (var property in jsonData) {
-    var encodedKey = encodeURIComponent(property);
-    var encodedValue = encodeURIComponent(jsonData[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  return formBody.join("&");
-}
+/**
+ * Encode un objet JSON en string pour le body d'un formulaire (application/x-www-form-urlencoded)
+ * @param {Object} jsonData
+ * @returns {string}
+ */
+const getDataEncoded = jsonData => {
+  console.log('[getDataEncoded] Entrée:', jsonData);
+  const result = Object.entries(jsonData)
+    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+    .join('&');
+  console.log('[getDataEncoded] Résultat:', result);
+  return result;
+};
 
-function formatingDate(date) {
-  var d = new Date(date),
-      month = '' + (d.getMonth() + 1),
-      day = '' + d.getDate(),
-      year = d.getFullYear();
+/**
+ * Formate une date en 'YYYY-MM-DD'
+ * @param {Date|string|number} date
+ * @returns {string}
+ */
+const formattingDate = date => {
+  console.log('[formattingDate] Entrée:', date);
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const result = `${year}-${month}-${day}`;
+  console.log('[formattingDate] Résultat:', result);
+  return result;
+};
 
-  if (month.length < 2) month = '0' + month;
-  if (day.length < 2) day = '0' + day;
+/**
+ * Copie certaines propriétés d'un objet source dans un nouvel objet
+ * @param {Object} source
+ * @param {Array<string>} keys
+ * @returns {Object}
+ */
+const copyObjectProps = (source, keys) => {
+  console.log('[copyObjectProps] Source:', source, 'Clés:', keys);
+  const result = keys.reduce((obj, key) => {
+    if (source[key] != null) obj[key] = source[key];
+    return obj;
+  }, {});
+  console.log('[copyObjectProps] Résultat:', result);
+  return result;
+};
 
-  return [year, month, day].join('-');
-}
+/**
+ * Transforme un objet {key: value, ...} en array [{key, value}, ...]
+ * @param {Object} obj
+ * @returns {Array<{key: string, value: any}>}
+ */
+const object2array = obj => {
+  console.log('[object2array] Entrée:', obj);
+  const result = Object.entries(obj).map(([key, value]) => ({ key, value }));
+  console.log('[object2array] Résultat:', result);
+  return result;
+};
 
-function copyObjectProps(source, keys) {
-    let newObject = {}
-    keys.forEach(function(key) {	
-        if(source[key] != null)				 
-        newObject[key] = source[key]
-    })
-    return newObject
-} 
+/**
+ * Calcule la somme d'un champ agrégé par groupe
+ * @param {Array<Object>} data
+ * @param {string} labelField
+ * @param {string} aggField
+ * @returns {Array<{key: string, value: number}>}
+ */
+const getGroupSum = (data, labelField, aggField) => {
+  console.log('[getGroupSum] Entrée:', { data, labelField, aggField });
+  const agg = data
+    .filter(Boolean)
+    .reduce((memo, item) => {
+      const label = item[labelField];
+      memo[label] = (memo[label] || 0) + (item[aggField] || 0);
+      return memo;
+    }, {});
+  const result = object2array(agg);
+  console.log('[getGroupSum] Résultat:', result);
+  return result;
+};
 
-function object2array (obj){
-    //transfo d'un objet {key1:value1,key2:value2...} à un array [{key:key1,value:value1},{key:key1,value:value2}...]
-    var arr = []
-    Object.keys(obj).forEach(function(key){
-     var value = obj[key];
-     arr.push({"key":key,"value":value})});
-     return arr;
-}
+/**
+ * Compte le nombre d'occurrences par valeur d'un champ
+ * @param {Array<Object>} data
+ * @param {string} aggField
+ * @returns {Array<{key: string, value: number}>}
+ */
+const getGroupCount = (data, aggField) => {
+  console.log('[getGroupCount] Entrée:', { data, aggField });
+  const result = object2array(_.countBy(data, aggField));
+  console.log('[getGroupCount] Résultat:', result);
+  return result;
+};
 
-function getGroupSum(data,labelField,aggField) {
-    var agg = _.reduce(data.filter(function(elt){
-  return elt != null;
- }), function(memo,item) {
-        memo[item[labelField]] = (memo[item[labelField]] || 0) + item[aggField];
-        return memo;
+/**
+ * Agrège des données selon une clé, en sommant les métriques et recopiant certains champs
+ * @param {Array<Object>} data
+ * @param {string} groupKey
+ * @param {string} metric
+ * @returns {Array<Object>}
+ */
+const groupBy = (data, groupKey, metric) => {
+  console.log('[groupBy] Entrée:', { data, groupKey, metric });
+  const agg = _.groupBy(data, groupKey);
+  const result = Object.entries(agg).map(([key, items]) =>
+    items.reduce((memo, item) => {
+      memo[item.etat] = (memo[item.etat] || 0) + (item[metric] || 0);
+      memo.reliquat = item.reliquat;
+      memo.bdd_id = item.bdd_id;
+      memo.bdd = item.bdd;
+      memo.pole = item.pole;
+      memo.soutien_oa = item.soutien_oa;
+      memo.surcout_uca = item.surcout_uca;
+      memo.debut_gc = item.debut_gc;
+      memo.fin_gc = item.fin_gc;
+      if (item.debut_gc) memo.period_gc = `${item.debut_gc}-${item.fin_gc}`;
+      return memo;
     }, {})
-    return object2array(agg)
-    }
+  );
+  console.log('[groupBy] Résultat:', result);
+  return result;
+};
 
-function getGroupCount(data,aggField) {
-    var agg = _.countBy(data,aggField)
-   // console.log(object2array(agg))
-	return object2array(agg)
-}
+/**
+ * Calculs agrégés sur le suivi budgétaire
+ * @param {Array<Object>} data
+ * @returns {Object}
+ */
+const budgetSuiviSumAndCount = data => {
+  console.log('[budgetSuiviSumAndCount] Entrée:', data);
+  const sum = (arr, field) =>
+    arr.reduce((acc, v) => acc + (v[field] || 0), 0);
 
-function groupBy(data,groupKey,metric){
-    var agg = _.groupBy(data,groupKey);
-   /* var agg = _(data).groupBy(function (o) { 
-        return o.bdd_id;
-      })*/
-    var arr = []
-    Object.keys(agg).forEach(function(key){
-       /*Unused because of async data arrival after page has been loaded
-        var obj = {};
-        getItems(urlBdd+"/"+key).done(function(result) {
-            obj["bdd_id"] = key;
-            obj["bdd"] = result.bdd;
-            obj["pole"] = result.pole_gestion;
-            obj["soutien_oa"] = result.soutien_oa;
-          });*/
-        var value = _.reduce(agg[key], function(memo,item) {
-            memo[item.etat] = (memo[item.etat] || 0) + item[metric];
-            memo["reliquat"] = item.reliquat;
-            memo["bdd_id"] = item.bdd_id;
-            memo["bdd"] = item.bdd;
-            memo["pole"] = item.pole;
-            memo["soutien_oa"] = item.soutien_oa;
-            memo["surcout_uca"] = item.surcout_uca;
-			memo["debut_gc"] = item.debut_gc;
-            memo["fin_gc"] = item.fin_gc;
-            if(item.debut_gc) {memo["period_gc"] = item.debut_gc + "-" + item.fin_gc}
-            return memo;
-        }, {})
-         arr.push(value)
-        //arr.push(Object.assign(obj,value))  
-    });
-        return arr;
-}
+  const prevOnly = data.filter(d => d['1-prev']);
+  const budgeteOnly = data.filter(
+    d => d['2-budgete'] && !d['3-estime'] && !d['4-facture']
+  );
+  const estimeOnly = data.filter(d => d['3-estime'] && !d['4-facture']);
+  const factureOnly = data.filter(d => !d['3-estime'] && d['4-facture']);
 
-function budgetSuiviSumAndCount(data){
-	 var prevInitial = data.filter(item => (item.hasOwnProperty('1-prev'))).reduce(
-    (acc, v) => acc+ v["1-prev"]
-    , 0
-    );
-    var budgeteInitial = data.reduce(
-        (acc, v) => acc+ v["2-budgete"]
-        , 0
-    );
-
-    var totalReliquat = data.reduce(
-        (acc, v) => acc+ v["reliquat"]
-        , 0
-    );
-	
-	 var prevOnly = data.filter(function(d){
-      return d["1-prev"]
-    })
-    var prevOnlyCount = prevOnly.length
-    var prevOnlySum = prevOnly.reduce(
-      (acc, v) => acc+ v["1-prev"]
-      , 0
-    );
-  
-    var budgeteOnly = data.filter(function(d){
-      return d["2-budgete"] && !d["3-estime"] && !d["4-facture"]
-    })
-    var budgeteOnlyCount = budgeteOnly.length
-    var budgeteOnlySum = budgeteOnly.reduce(
-      (acc, v) => acc+ v["2-budgete"]
-      , 0
-  );
-   var budgeteOnlyReliquat = budgeteOnly.reduce(
-    (acc, v) => acc+ v["reliquat"]
-    , 0
-  );
-  
-  var estimeOnly = data.filter(function(d){
-    return d["3-estime"] && !d["4-facture"]
-  })
-  var estimeOnlyCount = estimeOnly.length
-  var estimeOnlySum = estimeOnly.reduce(
-    (acc, v) => acc+ v["3-estime"]
-    , 0
-  );
-  var estimeOnlyReliquat = estimeOnly.reduce(
-    (acc, v) => acc+ v["reliquat"]
-    , 0
-  );
-  var factureOnly = data.filter(function(d){
-  return !d["3-estime"] && d["4-facture"]
-  })
-  var factureOnlyCount = factureOnly.length
-  var factureOnlySum = factureOnly.reduce(
-  (acc, v) => acc+ v["4-facture"]
-  , 0
-  );
-  var factureOnlyReliquat = factureOnly.reduce(
-    (acc, v) => acc+ v["reliquat"]
-    , 0
-  );
-  return {budgeteInitial, totalReliquat,
-          prevInitial,prevOnlySum,prevOnlyCount,
-          budgeteOnlySum,budgeteOnlyCount, budgeteOnlyReliquat,
-          estimeOnlySum,estimeOnlyCount, estimeOnlyReliquat,
-          factureOnlySum,factureOnlyCount, factureOnlyReliquat}
-}
+  const result = {
+    budgeteInitial: sum(data, '2-budgete'),
+    totalReliquat: sum(data, 'reliquat'),
+    prevInitial: sum(prevOnly, '1-prev'),
+    prevOnlySum: sum(prevOnly, '1-prev'),
+    prevOnlyCount: prevOnly.length,
+    budgeteOnlySum: sum(budgeteOnly, '2-budgete'),
+    budgeteOnlyCount: budgeteOnly.length,
+    budgeteOnlyReliquat: sum(budgeteOnly, 'reliquat'),
+    estimeOnlySum: sum(estimeOnly, '3-estime'),
+    estimeOnlyCount: estimeOnly.length,
+    estimeOnlyReliquat: sum(estimeOnly, 'reliquat'),
+    factureOnlySum: sum(factureOnly, '4-facture'),
+    factureOnlyCount: factureOnly.length,
+    factureOnlyReliquat: sum(factureOnly, 'reliquat')
+  };
+  console.log('[budgetSuiviSumAndCount] Résultat:', result);
+  return result;
+};
