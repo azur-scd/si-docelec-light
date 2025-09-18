@@ -1,5 +1,5 @@
+import { binaryState, poleState, marcheState, achatperenneState, typeAchatState, typeBddState, typeBase, typeOA, typePerimetre, accessState, typeSignalement , modeSignalement, getStatState, disciplines, deviseState, etatState, etatStatSaisie, years, steps,  metrics,  months,  sushiReportUrlSegment, esgbuDisplayReport, userGroups,  statsCounter } from '../lookupArrays.js';
 $(function () {
-	
 	// Détermine le mode édition selon le groupe utilisateur
 	let editMode = true;
     if ($('#usergroup').val() == "guest") {

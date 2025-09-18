@@ -1,3 +1,4 @@
+import { binaryState, poleState, marcheState, achatperenneState, typeAchatState, typeBddState, typeBase, typeOA, typePerimetre, accessState, typeSignalement , modeSignalement, getStatState, disciplines, deviseState, etatState, etatStatSaisie, years, steps,  metrics,  months,  sushiReportUrlSegment, esgbuDisplayReport, userGroups,  statsCounter } from '../lookupArrays.js';
 $(function(){
 	
 	// Mode édition activé sauf pour les invités
