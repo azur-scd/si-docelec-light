@@ -1,1 +1,1 @@
-git config core.autocrlf false
+*.sh text eol=lf
