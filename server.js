@@ -20,7 +20,7 @@ const busboy = require('connect-busboy');
 const cors = require('cors');
 // path : module Node.js pour gérer les chemins de fichiers.
 const path = require('path');
-// http
+// http : module Node.js pour créer des serveurs HTTP et faire des requêtes HTTP. Nécessaire pour construire des applications et des API
 const http = require('http');
 
 
