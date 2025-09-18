@@ -1,4 +1,4 @@
-function getBarLine(div,store,barArgument,barValueField,barSerieName,lineValueField,lineSerieName,titleString){
+export function getBarLine(div,store,barArgument,barValueField,barSerieName,lineValueField,lineSerieName,titleString){
     return  $("#"+div).dxChart({
         palette: "vintage",
         dataSource: store,

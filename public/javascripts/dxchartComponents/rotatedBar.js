@@ -1,4 +1,4 @@
-function getRotatedBar(div,store,argument,valueField1,nameField1,valueField2,nameField2,titleString){
+export function getRotatedBar(div,store,argument,valueField1,nameField1,valueField2,nameField2,titleString){
     return  $("#"+div).dxChart({
         title: titleString,
         dataSource: store,

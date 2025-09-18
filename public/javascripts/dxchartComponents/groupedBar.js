@@ -1,4 +1,4 @@
-function getGroupedBar(div,store,argument,series,titleString){
+export function getGroupedBar(div,store,argument,series,titleString){
     return  $("#"+div).dxChart({
         dataSource: store,
         commonSeriesSettings: {

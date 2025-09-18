@@ -1,4 +1,4 @@
-function getStackedBar(div,store,argument,series,titleString){
+export function getStackedBar(div,store,argument,series,titleString){
     return  $("#"+div).dxChart({
         dataSource: store,
         commonSeriesSettings: {

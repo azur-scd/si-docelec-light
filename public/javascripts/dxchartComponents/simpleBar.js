@@ -1,4 +1,4 @@
-function getSimpleBar(div,store,argumentField,valueField,colorField,titleString){
+export function getSimpleBar(div,store,argumentField,valueField,colorField,titleString){
     return  $("#"+div).dxChart({
          dataSource: store, 
         commonSeriesSettings: {

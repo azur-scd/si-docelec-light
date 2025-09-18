@@ -1,4 +1,4 @@
-function getPie(div,store,argument,value,titleString){
+export function getPie(div,store,argument,value,titleString){
     return  $("#"+div).dxPieChart({
         type: "doughnut",
         palette: "bright",

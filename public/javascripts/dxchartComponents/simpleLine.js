@@ -1,4 +1,4 @@
-function getSimpleLine(div,store,argument,series,titleString){
+export function getSimpleLine(div,store,argument,series,titleString){
     return   $("#"+div).dxChart({
         dataSource: store, 
         palette: "Violet",
