@@ -8,6 +8,8 @@
   
 // express : framework web Node.js pour gérer les routes et les requêtes HTTP.
 const express        = require('express');
+// http : module Node.js pour créer le serveur HTTP et configurer les timeouts.
+const http = require('http');
 // passport : gestion de l’authentification (login, sessions…).
 const passport = require('passport')
 // express-session : gestion des sessions côté serveur.
@@ -63,7 +65,11 @@ require("./api/config/passport.js")
 app.set('view engine', 'ejs');
 
 // Lancement du serveur
-app.listen(port, () => {
+// Création du serveur HTTP avec Express pour configurer le timeout des requêtes
+const server = http.createServer(app);
+// Configuration du timeout à 30 minutes pour les uploads volumineux avec Busboy
+server.requestTimeout = 30 * 60 * 1000; // 30 minutes en millisecondes
+server.listen(port, () => {
     console.log('We are live on ' + port);
   });
 
