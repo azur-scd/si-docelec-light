@@ -20,12 +20,28 @@ $(function () {
     // Logs pour l'initialisation
 	// selected_bdd = id d'un input caché. Si vide on ne charge rien
     console.log("[init] Lancement des requêtes initiales stats")
-    getAvalaibleReports($("#selected_bdd").val())
-    getFormData($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val())
-    getSushiParam($("#selected_bdd").val())
-    annualTotalBar($("#selected_bdd").val(), $("#selected_report").val())
-    monthTotalLine($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val())
-    indicators($("#selected_bdd").val(), $("#selected_report").val())
+
+// Initialisation (uniquement si selected_bdd non vide)
+if ($("#selected_bdd").val()) {
+    getAvalaibleReports($("#selected_bdd").val());
+    getFormData($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val());
+    getSushiParam($("#selected_bdd").val());
+    annualTotalBar($("#selected_bdd").val(), $("#selected_report").val());
+    monthTotalLine($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val());
+    indicators($("#selected_bdd").val(), $("#selected_report").val());
+}
+
+// Exécution automatique dès modification de selected_bdd
+$("#selected_bdd").on("change", function() {
+    if ($(this).val()) {
+        getAvalaibleReports($(this).val());
+        getFormData($("#selected_year").val(), $(this).val(), $("#selected_report").val());
+        getSushiParam($(this).val());
+        annualTotalBar($(this).val(), $("#selected_report").val());
+        monthTotalLine($("#selected_year").val(), $(this).val(), $("#selected_report").val());
+        indicators($(this).val(), $("#selected_report").val());
+    }
+});
 
     // Store BDD filtrant sur stats_collecte année sélectionnée
     var storeBdd = new DevExpress.data.CustomStore({
@@ -66,13 +82,25 @@ $(function () {
     });
 
     // Store des rapports stats
-    var storeStatsReports = new DevExpress.data.CustomStore({
-        loadMode: "raw",
-        load: function () {
-            console.log("[storeStatsReports] Chargement stats reports")
+var storeStatsReports = new DevExpress.data.CustomStore({
+    loadMode: "raw",
+    load: function () {
+        var selectedYear = $("#selected_year").val();
+        var selectedBdd = $("#selected_bdd").val();
+        if (selectedYear && selectedBdd) {
+            console.log("[storeStatsReports] Année et BDD renseignés, chargement stats reports");
             return getItems(urlStatsReports);
+        } else {
+            console.log("[storeStatsReports] Année ou BDD non renseignée, aucun chargement");
+            // Retourne une promesse résolue avec un tableau vide pour éviter une erreur DevExpress
+            var d = new $.Deferred();
+            d.resolve([]);
+            return d.promise();
         }
-    });
+    }
+});
+
+
 
     // Sélecteur d'année
     $("#selectbox-years").dxSelectBox({
@@ -129,6 +157,7 @@ $(function () {
                 monthTotalLine($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val())
         }
     });
+
 
     // Bouton pour enregistrer le formulaire
     $("#insertFormData").click(function () {
