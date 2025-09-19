@@ -128,7 +128,7 @@ export function deleteItems(url, key){
  * @returns {string}
  */
 export const getDataEncoded = (data) => {
-    console.log ("[getDataEncoded] : data="+ data);
+    console.log ("[getDataEncoded] : data="+ JSON.stringify(data));
   return Object.entries(data)
     .flatMap(([key, value]) => {
       if (value === null || value === undefined) return []; // ignore null/undefined
