@@ -3,14 +3,14 @@
  * @param {Date|string|number} date
  * @returns {string}
  */
-export const formattingDate = date => {
-  console.log('[formattingDate] Entrée:', date);
+export const formatingDate = date => {
+  console.log('[formatingDate] Entrée:', date);
   const d = new Date(date);
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
   const day = String(d.getDate()).padStart(2, '0');
   const result = `${year}-${month}-${day}`;
-  console.log('[formattingDate] Résultat:', result);
+  console.log('[formatingDate] Résultat:', result);
   return result;
 };
 
