@@ -2,6 +2,14 @@ import { binaryState, poleState, marcheState, achatperenneState, typeAchatState,
 import {urlBdd, urlGestion, urlGestionCustom, urlGestionGc, urlSignalement, urlSignalementCustom, urlSignalementPrimo, urlGC, urlStatsReports, urlFormStats, urlStats, urlStatsSuivi, urlStatsIndicators, urlStatsEsgbu, urlBddUniqueStatsReports, urlProxySushiTest, urlProxySushi, urlUser, urlBU, urlDisc, urlBdd2Disc, getApiUrl} from '../apiUrls.js';
 import {formattingDate, copyObjectProps, object2array, getGroupSum, getGroupCount, groupBy, budgetSuiviSumAndCount} from '../commonFunctions.js';
 import {handleResponse, handleError, getItems, updateItems, createItems, deleteItems, getDataEncoded} from '../crud.js';
+import {getStackedBar} from '../dxchartComponents/stackedBar.js';
+import {getBarLine} from '../dxchartComponents/barLine.js';
+import {getGroupedBar} from '../dxchartComponents/groupedBar.js';
+import {getPie} from '../dxchartComponents/pie.js';
+import {getRotatedBar} from '../dxchartComponents/rotateBar.js';
+import {getSimpleBar} from '../dxchartComponents/simpleBar.js';
+import {getSimpleLine} from '../dxchartComponents/simpleLine.js';
+import {getStackedBar} from '../dxchartComponents/stackedBar.js';
 
 $(function(){
 	
