@@ -298,7 +298,7 @@ $(function () {
 
     // Génère l'URL Sushi complète
     function createSushiUrl(start, end, sushi_url_segment) {
-		console.log ("[createSushiUrl] : start="+start+", end="+end+", sushi_url"=sushi_url+", sushi_url_segment"+sushi_url_segment);
+		console.log ("[createSushiUrl] : start="+start+", end="+end+", sushi_url="sushi_url+", sushi_url_segment"+sushi_url_segment);
         var obj = {}; var resourceSushi; var completeUrl;
         if ($("#resourceSushiUrl").val().endsWith("/")) {
             resourceSushi = $("#resourceSushiUrl").val() + "reports/" + sushi_url_segment
