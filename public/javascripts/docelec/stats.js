@@ -91,7 +91,8 @@ var storeStatsReports = new DevExpress.data.CustomStore({
             console.log("[storeStatsReports] Année et BDD renseignés, chargement stats reports");
             return getItems(urlStatsReports);
         } else {
-            console.log("[storeStatsReports] Année ou BDD non renseignée, aucun chargement");
+            console.log("[storeStatsReports] Année ou BDD non renseignée, mais pour l'instant on renvoie getItems(urlStatsReports);");
+            return getItems(urlStatsReports);
             // Retourne une promesse résolue avec un tableau vide pour éviter une erreur DevExpress
             var d = new $.Deferred();
             d.resolve([]);
@@ -328,7 +329,14 @@ var storeStatsReports = new DevExpress.data.CustomStore({
 
     // Génère l'URL Sushi complète
     function createSushiUrl(start, end, sushi_url_segment) {
-		console.log ("[createSushiUrl] : start="+start+", end="+end+", sushi_url_segment"+sushi_url_segment);
+		
+		function formatToYearMonth(dateStr) {
+    if (typeof dateStr === "string" && dateStr.length >= 7) {
+        return dateStr.substring(0, 7);
+    }
+    return dateStr;
+}
+		console.log ("[createSushiUrl] : start="+start+", end="+end+", sushi_url_segment="+sushi_url_segment);
         var obj = {}; var resourceSushi; var completeUrl;
         if ($("#resourceSushiUrl").val().endsWith("/")) {
             resourceSushi = $("#resourceSushiUrl").val() + "reports/" + sushi_url_segment
@@ -345,8 +353,8 @@ var storeStatsReports = new DevExpress.data.CustomStore({
         if ($("#resourceApiKey").val() != "") {
             obj["api_key"] = $("#resourceApiKey").val()
         }
-        obj["begin_date"] = start
-        obj["end_date"] = end
+        obj["begin_date"] = formatToYearMonth(start);
+        obj["end_date"] =  formatToYearMonth(end);
         completeUrl = resourceSushi + "?" + getDataEncoded(obj)
         console.log("[createSushiUrl] URL générée :", completeUrl)
         return $("#completeSushiUrl").val(completeUrl)
