@@ -51,6 +51,7 @@ export function handleError(jqXHR, textStatus, errorThrown) {
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
 export function getItems(url) {
+    console.log ("[getItems] : url="+url);
     return new Promise((resolve, reject) => {
         $.ajax({
             method: 'GET',
@@ -69,6 +70,7 @@ export function getItems(url) {
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
 export function updateItems(url, key, values){
+    console.log ("[updateItems] : url="+url+", key="+key+" ,values="+values);
     return new Promise((resolve, reject) => {
         $.ajax({
             method: 'PUT',
@@ -88,6 +90,7 @@ export function updateItems(url, key, values){
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
 export function createItems(url, values){
+    console.log ("[createItems] : url="+url+", values="+values);
     return new Promise((resolve, reject) => {
         $.ajax({
             method: 'POST',
@@ -107,6 +110,7 @@ export function createItems(url, values){
  * @returns {Promise} - Résout avec les données ou la réponse brute
  */
 export function deleteItems(url, key){
+    console.log ("[deleteItems] : url="+url+", key="+key);
     return new Promise((resolve, reject) => {
         $.ajax({
             method: 'DELETE',
@@ -124,6 +128,7 @@ export function deleteItems(url, key){
  * @returns {string}
  */
 export const getDataEncoded = (data) => {
+    console.log ("[getDataEncoded] : data="+ data);
   return Object.entries(data)
     .flatMap(([key, value]) => {
       if (value === null || value === undefined) return []; // ignore null/undefined

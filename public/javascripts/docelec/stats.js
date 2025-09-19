@@ -18,6 +18,7 @@ $(function () {
     }
 	
     // Logs pour l'initialisation
+	// selected_bdd = id d'un input caché. Si vide on ne charge rien
     console.log("[init] Lancement des requêtes initiales stats")
     getAvalaibleReports($("#selected_bdd").val())
     getFormData($("#selected_year").val(), $("#selected_bdd").val(), $("#selected_report").val())
@@ -298,7 +299,7 @@ $(function () {
 
     // Génère l'URL Sushi complète
     function createSushiUrl(start, end, sushi_url_segment) {
-		console.log ("[createSushiUrl] : start="+start+", end="+end+", sushi_url="sushi_url+", sushi_url_segment"+sushi_url_segment);
+		console.log ("[createSushiUrl] : start="+start+", end="+end+", sushi_url="+sushi_url+", sushi_url_segment"+sushi_url_segment);
         var obj = {}; var resourceSushi; var completeUrl;
         if ($("#resourceSushiUrl").val().endsWith("/")) {
             resourceSushi = $("#resourceSushiUrl").val() + "reports/" + sushi_url_segment
@@ -474,7 +475,7 @@ $(function () {
 
     // Nettoyage des IDs mensuels
     function cleanIds() {
-		console.log ("[cleanIds]);
+		console.log ("[cleanIds]");
         $("input[id^=id_]").each(function () {
             if ($(this).val() != '') {
                 deleteItems(urlStats, $(this).val());
