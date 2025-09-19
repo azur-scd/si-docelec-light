@@ -331,6 +331,7 @@ var storeStatsReports = new DevExpress.data.CustomStore({
     function createSushiUrl(start, end, sushi_url_segment) {
 		
 		function formatToYearMonth(dateStr) {
+// les dates doivent être au format AAAA-MM pour le protocole Sushi
     if (typeof dateStr === "string" && dateStr.length >= 7) {
         return dateStr.substring(0, 7);
     }
@@ -421,7 +422,7 @@ var storeStatsReports = new DevExpress.data.CustomStore({
         });
     });
 
-    // Store total annuel
+    // Store total annuel. Utilisé pour le graphique par année
     function annualTotalStore(bdd, report) {
 		console.log ("[annualTotalStore] : bdd="+bdd+", report="+report);
         return new DevExpress.data.CustomStore({
@@ -435,13 +436,14 @@ var storeStatsReports = new DevExpress.data.CustomStore({
                         .sort(function (a, b) {
                             return a.date - b.date;
                         })
+						console.log (result);
                         return result
                     })
             }
         });
     }
 
-    // Store total mensuel
+    // Store total mensuel. Utilisé pour le graphique par mois
     function monthlyTotalStore(year, bdd, report) {
 		console.log ("[monthlyTotalStore] : bdd="+bdd+", report="+report+", year="+year);
         return new DevExpress.data.CustomStore({
@@ -490,12 +492,14 @@ var storeStatsReports = new DevExpress.data.CustomStore({
         })
     }
 
-    // Affichage des graphiques
+// Affichage des graphiques
+// Evolution annuelle
     function annualTotalBar(bdd, report) {
 		console.log ("[annualTotalBar] : bdd="+bdd+", report"+report);
         return getSimpleBar("totalBarChart", annualTotalStore(bdd, report), "date", "total", "date", "")
     }
 
+// Détail par mois (année sélectionnée)
     function monthTotalLine(year, bdd, report) {
 		console.log ("[monthTotalLine] : bdd="+bdd+", report"+report+", year="+year);
         var series = [{ valueField: "total", name: "Total" }]
