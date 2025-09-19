@@ -251,6 +251,7 @@ var storeStatsReports = new DevExpress.data.CustomStore({
                 sum += parseInt(this.value);
             }
         });
+		console.log ("[calculateSum] : sum="+sum);
         $("#total").val(sum);
     }
 
@@ -436,7 +437,6 @@ var storeStatsReports = new DevExpress.data.CustomStore({
                         .sort(function (a, b) {
                             return a.date - b.date;
                         })
-						console.log (result);
                         return result
                     })
             }
