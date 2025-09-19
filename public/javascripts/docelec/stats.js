@@ -6,7 +6,7 @@ import {getStackedBar} from '../dxchartComponents/stackedBar.js';
 import {getBarLine} from '../dxchartComponents/barLine.js';
 import {getGroupedBar} from '../dxchartComponents/groupedBar.js';
 import {getPie} from '../dxchartComponents/pie.js';
-import {getRotatedBar} from '../dxchartComponents/rotateBar.js';
+import {getRotatedBar} from '../dxchartComponents/rotatedBar.js';
 import {getSimpleBar} from '../dxchartComponents/simpleBar.js';
 import {getSimpleLine} from '../dxchartComponents/simpleLine.js';
 
@@ -161,6 +161,7 @@ $(function () {
 	
     // Affiche les rapports disponibles pour une ressource
     function getAvalaibleReports(bdd){
+		console.log ("[getAvalaibleReports] : bdd="+ bdd);
         $("#avalaibleReports").empty()
         return getItems(urlBddUniqueStatsReports + "/bddid/" + bdd)
         .then(function (result) {
@@ -174,6 +175,7 @@ $(function () {
 
     // Récupère et affiche les données de formulaire pour BDD/année/rapport
     function getFormData(year, bdd, report) {
+		console.log ("[getFormData] : year="+ year+", bdd="+bdd+", report="+report);
         $("#form").empty()
         displayForm();
         return getItems(urlFormStats + "/?bddId=" + bdd + "&reportId=" + report + "&year=" + year)
@@ -203,6 +205,7 @@ $(function () {
 
     // Affiche le formulaire (un champ par mois)
     function displayForm() {
+		console.log ("[displayForm]");
         months.map(function (m) {
             $("#form").append("<div class='form-group'><label for='" + m.cle + "' class='control-label col-md-4'>" + m.valeur + "</label><div class='col-md-6'><input type='text' class='form-control' id='" + m.cle + "'><input type='hidden' id='id_" + m.cle + "'></div></div>")
         })
@@ -210,6 +213,7 @@ $(function () {
 
     // Calcule la somme annuelle
     function calculateSum() {
+		console.log ("[calculateSum]");
         var sum = 0;
         $("#janvier,#fevrier,#mars,#avril,#mai,#juin,#juillet,#aout,#septembre,#octobre,#novembre,#decembre").each(function () {
             if (!isNaN(this.value) && this.value.length != 0) {
@@ -221,6 +225,7 @@ $(function () {
 
     // Récupère et affiche les paramètres Sushi pour la BDD
     function getSushiParam(id) {
+		console.log ("[getSushiParam] : id="+ id);
         return getItems(urlBdd + "/" + id)
             .then(function (result) {
                 // On remet ici les valeurs de l'array sushiReportUrlSegment car blocage dans l'UI sinon ?
@@ -293,8 +298,8 @@ $(function () {
 
     // Génère l'URL Sushi complète
     function createSushiUrl(start, end, sushi_url_segment) {
+		console.log ("[createSushiUrl] : start="+start+", end="+end+", sushi_url"=sushi_url+", sushi_url_segment"+sushi_url_segment);
         var obj = {}; var resourceSushi; var completeUrl;
-
         if ($("#resourceSushiUrl").val().endsWith("/")) {
             resourceSushi = $("#resourceSushiUrl").val() + "reports/" + sushi_url_segment
         }
@@ -319,6 +324,7 @@ $(function () {
 
     // Bouton test Sushi
     $("#testSushi").click(function () {
+		console.log ("Evenement #testSushi.click");
         var completeUrl = $("#completeSushiUrl").val()
         console.log("[testSushi] URL test :", completeUrl)
         var reportId = sushiReportUrlSegment.filter(function (d) { return d.cle = $("#selected_sushi_report").val() }).map(function (d) { return d.mapReportId })
@@ -340,6 +346,7 @@ $(function () {
 
     // Bouton récupération Sushi avec logs détaillés
     $("#getSushi").click(function () {
+		console.log ("Evenement #getSushi.click");
         var completeUrl = $("#completeSushiUrl").val();
         console.log("[getSushi] URL complète utilisée :", completeUrl);
         var reportId = sushiReportUrlSegment.filter(function (d) { return d.cle = $("#selected_sushi_report").val() }).map(function (d) { return d.mapReportId });
@@ -378,6 +385,7 @@ $(function () {
 
     // Store total annuel
     function annualTotalStore(bdd, report) {
+		console.log ("[annualTotalStore] : bdd="+bdd+", report="+report);
         return new DevExpress.data.CustomStore({
             key: "id",
             load: function () {
@@ -397,6 +405,7 @@ $(function () {
 
     // Store total mensuel
     function monthlyTotalStore(year, bdd, report) {
+		console.log ("[monthlyTotalStore] : bdd="+bdd+", report="+report+", year="+year);
         return new DevExpress.data.CustomStore({
             key: "id",
             load: function () {
@@ -421,6 +430,7 @@ $(function () {
 
     // Store pour les données de gestion (facturé)
     function gestionData(bdd) {
+		console.log ("[gestionData] : bdd="+bdd);
         return new DevExpress.data.CustomStore({
             key: "id",
             load: function () {
@@ -444,15 +454,19 @@ $(function () {
 
     // Affichage des graphiques
     function annualTotalBar(bdd, report) {
+		console.log ("[annualTotalBar] : bdd="+bdd+", report"+report);
         return getSimpleBar("totalBarChart", annualTotalStore(bdd, report), "date", "total", "date", "")
     }
 
     function monthTotalLine(year, bdd, report) {
+		console.log ("[monthTotalLine] : bdd="+bdd+", report"+report+", year="+year);
         var series = [{ valueField: "total", name: "Total" }]
         return getSimpleLine("monthLineChart", monthlyTotalStore(year, bdd, report), "mois", series, "")
     }
 
     function indicators(bdd, report) {
+		console.log ("[indicators] : bdd="+bdd+", report"+report);
+
         // Possibilité d'afficher les indicateurs ici
         //console.log(annualTotalStore(bdd,report))
         //console.log(gestionData(bdd))
@@ -460,6 +474,7 @@ $(function () {
 
     // Nettoyage des IDs mensuels
     function cleanIds() {
+		console.log ("[cleanIds]);
         $("input[id^=id_]").each(function () {
             if ($(this).val() != '') {
                 deleteItems(urlStats, $(this).val());

@@ -6,7 +6,7 @@ import {getStackedBar} from '../dxchartComponents/stackedBar.js';
 import {getBarLine} from '../dxchartComponents/barLine.js';
 import {getGroupedBar} from '../dxchartComponents/groupedBar.js';
 import {getPie} from '../dxchartComponents/pie.js';
-import {getRotatedBar} from '../dxchartComponents/rotateBar.js';
+import {getRotatedBar} from '../dxchartComponents/rotatedBar.js';
 import {getSimpleBar} from '../dxchartComponents/simpleBar.js';
 import {getSimpleLine} from '../dxchartComponents/simpleLine.js';
 $(function(){
