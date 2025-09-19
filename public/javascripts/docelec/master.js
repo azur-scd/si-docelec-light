@@ -14,6 +14,13 @@ import {urlBdd, urlGestion, urlGestionCustom, urlGestionGc, urlSignalement, urlS
 import { binaryState, poleState, marcheState, achatperenneState, typeAchatState, typeBddState, typeBase, typeOA, typePerimetre, accessState, typeSignalement , modeSignalement, getStatState, disciplines, deviseState, etatState, etatStatSaisie, years, steps,  metrics,  months,  sushiReportUrlSegment, esgbuDisplayReport, userGroups,  statsCounter } from '../lookupArrays.js';
 import {formattingDate, copyObjectProps, object2array, getGroupSum, getGroupCount, groupBy, budgetSuiviSumAndCount} from '../commonFunctions.js';
 import {handleResponse, handleError, getItems, updateItems, createItems, deleteItems, getDataEncoded} from '../crud.js';
+import {getStackedBar} from '../dxchartComponents/stackedBar.js';
+import {getBarLine} from '../dxchartComponents/barLine.js';
+import {getGroupedBar} from '../dxchartComponents/groupedBar.js';
+import {getPie} from '../dxchartComponents/pie.js';
+import {getRotatedBar} from '../dxchartComponents/rotateBar.js';
+import {getSimpleBar} from '../dxchartComponents/simpleBar.js';
+import {getSimpleLine} from '../dxchartComponents/simpleLine.js';
 
 $(function(){
 	

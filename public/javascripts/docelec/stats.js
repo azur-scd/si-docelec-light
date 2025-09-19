@@ -9,8 +9,6 @@ import {getPie} from '../dxchartComponents/pie.js';
 import {getRotatedBar} from '../dxchartComponents/rotateBar.js';
 import {getSimpleBar} from '../dxchartComponents/simpleBar.js';
 import {getSimpleLine} from '../dxchartComponents/simpleLine.js';
-import {getStackedBar} from '../dxchartComponents/stackedBar.js';
-
 
 $(function () {
 	
